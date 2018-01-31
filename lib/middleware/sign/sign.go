@@ -1,11 +1,11 @@
 package sign
 
 import (
+	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//Config 需要的结构配置
+//Config 需要的结构配置 参考beego的apiauth
 type Config struct {
 	F       func(string) string
 	Timeout int
@@ -49,32 +49,27 @@ func New(conf Config) gin.HandlerFunc {
 		if ctx.Request.Method == "GET" {
 			requestURL = ctx.Request.RequestURI
 		} else {
-			c := ctx.Copy()
-			body, err = getRawBody(c.Request.Body)
+			requestURL = ctx.Request.URL.Path
+			body, err = ctx.GetRawData()
+			newBody := ioutil.NopCloser(bytes.NewBuffer(body))
+			ctx.Request.Body = newBody
 		}
-
 		serviceSignature := Signature(appsecret, ctx.Request.Method, body, requestURL, ctx.GetHeader("timestamp"))
+		// fmt.Println("serviceSignature:", serviceSignature)
+		// fmt.Println("clientSignature:", clientSignature)
 		if clientSignature != serviceSignature {
 			ctx.JSON(http.StatusForbidden, "Signature Failed")
 		}
+		ctx.Next()
 	}
 }
 
 // Signature used to generate signature with the appsecret/method/params/RequestURI
 func Signature(appSecret, method string, body []byte, RequestURL string, timestamp string) (result string) {
 	stringToSign := fmt.Sprintf("%v\n%v\n%v\n%v\n", method, string(body), RequestURL, timestamp)
+	// fmt.Println(1111, stringToSign)
 	sha256 := sha256.New
 	hash := hmac.New(sha256, []byte(appSecret))
 	hash.Write([]byte(stringToSign))
 	return base64.StdEncoding.EncodeToString(hash.Sum(nil))
-}
-
-// GetRawBody returns the body as a byte array, closing the body reader.
-func getRawBody(body io.ReadCloser) ([]byte, error) {
-	defer body.Close()
-	rawBody, err := ioutil.ReadAll(body)
-	if err != nil {
-		return nil, err
-	}
-	return rawBody, nil
 }
