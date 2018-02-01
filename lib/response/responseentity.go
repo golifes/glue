@@ -1,4 +1,4 @@
-package responseentity
+package response
 
 import "net/http"
 

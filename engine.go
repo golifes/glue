@@ -37,6 +37,9 @@ func Engine() *gin.Engine {
 			"message": "pong",
 		})
 	})
+
+	s.POST("/v1/login", &auth.LoginController{}.Post())
+
 	s.POST("/form_post", func(c *gin.Context) {
 		type Login struct {
 			Message string
