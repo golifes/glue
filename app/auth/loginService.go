@@ -9,12 +9,12 @@ import (
 )
 
 //LoginData 登录from请求数据字段
-type LoginData struct {
+type loginData struct {
 	UserName string
 	Password string
 }
 
-func loginService(loginData *LoginData, appID string) (responseEntity ResponseEntity) {
+func loginService(loginData *loginData, appID string) (responseEntity ResponseEntity) {
 	defer func() {
 		// recover from panic if one occured. Set err to nil otherwise.
 		if r := recover(); r != nil {

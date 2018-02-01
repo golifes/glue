@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/xormplus/xorm"
 )
 

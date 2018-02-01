@@ -32,13 +32,14 @@ func Engine() *gin.Engine {
 		log.Fatal("init db error:", err.Error())
 	}
 	s.Use(sign.New(sign.Config{F: getAppSecret, Timeout: 100}))
+
 	s.GET("/a", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
 	})
 
-	s.POST("/v1/login", &auth.LoginController{}.Post())
+	s.POST("/v1/login", new(auth.LoginController).Post())
 
 	s.POST("/form_post", func(c *gin.Context) {
 		type Login struct {
