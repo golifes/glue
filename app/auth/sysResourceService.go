@@ -15,7 +15,7 @@ func MenuByUserIDService(userID int64) (responseEntity response.ResponseEntity) 
 	roleID, _ := findRoleIDByUserID(userID)
 	menus, err := findResourceByMultiRole(roleID, 1)
 	if err != nil {
-		return *responseEntity.BuildError(response.BuildEntity(QueryError, GetMsg(QueryError)))
+		return *responseEntity.BuildError(response.BuildEntity(QueryError, getMsg(QueryError)))
 	}
 	return *responseEntity.Build(menus)
 }

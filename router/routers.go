@@ -14,8 +14,13 @@ func Routers(s *gin.Engine) {
 	s.Use(sign.New(sign.Config{F: getAppSecret, Timeout: 100}))
 	s.Use(casbin.RestAuth(casbin.Config{OpenF: getOpenRestAutz, F: getRestAutz}))
 	v1 := s.Group("/v1")
-	v1.POST("/login", new(auth.LoginController).Post())
-
+	{
+		v1.POST("/login", new(auth.LoginController).Post())
+		user := v1.Group("/user")
+		{
+			user.GET("/", new(auth.SysResourceController).MenusByUserID())
+		}
+	}
 	s.GET("/a", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",

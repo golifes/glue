@@ -13,8 +13,8 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
-	"sync/atomic"
 )
 
 //RandStringByLen 随机字符串
@@ -108,15 +108,16 @@ func getCurrentDirectory() string {
 	return strings.Replace(dir, "\\", "/", -1)
 }
 
-//GetIncreaseID 并发环境下生成一个增长的id,按需设置局部变量或者全局变量
-func GetIncreaseID(ID *uint64) uint64 {
-	var n, v uint64
-	for {
-		v = atomic.LoadUint64(ID)
-		n = v + 1
-		if atomic.CompareAndSwapUint64(ID, v, n) {
-			break
-		}
+// ToInt64 convert any numeric value to int64
+func toInt64(value interface{}) (d int64, err error) {
+	val := reflect.ValueOf(value)
+	switch value.(type) {
+	case int, int8, int16, int32, int64:
+		d = val.Int()
+	case uint, uint8, uint16, uint32, uint64:
+		d = int64(val.Uint())
+	default:
+		err = fmt.Errorf("ToInt64 need numeric not `%T`", value)
 	}
-	return n
+	return
 }

@@ -18,7 +18,7 @@ func loginService(loginData *loginData, appID string) (responseEntity response.R
 	defer func() {
 		// recover from panic if one occured. Set err to nil otherwise.
 		if r := recover(); r != nil {
-			responseEntity.BuildError(response.BuildEntity(QueryError, GetMsg(QueryError)))
+			responseEntity.BuildError(response.BuildEntity(QueryError, getMsg(QueryError)))
 			return
 		}
 	}()
@@ -26,26 +26,26 @@ func loginService(loginData *loginData, appID string) (responseEntity response.R
 	user, err := findUserAllColums(loginData.UserName)
 
 	if &user.ID == nil && err != nil {
-		return *responseEntity.BuildError(response.BuildEntity(NotFoundUser, GetMsg(NotFoundUser)))
+		return *responseEntity.BuildError(response.BuildEntity(NotFoundUser, getMsg(NotFoundUser)))
 	}
 	if !user.CheckEqualPassword(loginData.Password) {
-		return *responseEntity.NewBuild(http.StatusUnauthorized, response.BuildEntity(Unauthorized, GetMsg(Unauthorized)))
+		return *responseEntity.NewBuild(http.StatusUnauthorized, response.BuildEntity(Unauthorized, getMsg(Unauthorized)))
 	}
 
 	roleID, err1 := findRoleIDByUserID(user.ID)
 	if err1 != nil {
-		return *responseEntity.BuildError(response.BuildEntity(NotFoundUserRole, GetMsg(NotFoundUserRole)))
+		return *responseEntity.BuildError(response.BuildEntity(NotFoundUserRole, getMsg(NotFoundUserRole)))
 
 	}
 	client, err := GetClientService(appID)
 	if err != nil {
-		return *responseEntity.BuildError(response.BuildEntity(GenerateTokenError, GetMsg(GenerateTokenError)))
+		return *responseEntity.BuildError(response.BuildEntity(GenerateTokenError, getMsg(GenerateTokenError)))
 	}
 	exp := time.Now().Add(time.Hour * time.Duration(1)).Unix()
 	token, tokenErr := getToken(appID, client.VerifySecret, user, roleID, exp)
 
 	if tokenErr != nil {
-		return *responseEntity.BuildError(response.BuildEntity(GenerateTokenError, GetMsg(GenerateTokenError)))
+		return *responseEntity.BuildError(response.BuildEntity(GenerateTokenError, getMsg(GenerateTokenError)))
 	}
 	type data struct {
 		Account string

@@ -6,6 +6,7 @@ import (
 	conf "github.com/xwinie/glue/app"
 )
 
+//常量
 const (
 	Unauthorized                 = http.StatusUnauthorized
 	Success                      = conf.Auth
@@ -67,6 +68,6 @@ var Msg = map[int]string{
 	UpdateClientError:            "更新应用异常，应用不存在",
 }
 
-func GetMsg(code int) string {
+func getMsg(code int) string {
 	return Msg[code]
 }
