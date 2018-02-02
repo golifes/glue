@@ -5,7 +5,7 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	. "github.com/xwinie/glue/lib/response"
+	"github.com/xwinie/glue/lib/response"
 )
 
 //LoginData 登录from请求数据字段
@@ -14,50 +14,48 @@ type loginData struct {
 	Password string
 }
 
-func loginService(loginData *loginData, appID string) (responseEntity ResponseEntity) {
+func loginService(loginData *loginData, appID string) (responseEntity response.ResponseEntity) {
 	defer func() {
 		// recover from panic if one occured. Set err to nil otherwise.
 		if r := recover(); r != nil {
-			responseEntity.BuildError(BuildEntity(QueryError, GetMsg(QueryError)))
+			responseEntity.BuildError(response.BuildEntity(QueryError, GetMsg(QueryError)))
 			return
 		}
 	}()
 
 	user, err := findUserAllColums(loginData.UserName)
 
-	if &user.Id == nil && err != nil {
-		return *responseEntity.BuildError(BuildEntity(NotFoundUser, GetMsg(NotFoundUser)))
+	if &user.ID == nil && err != nil {
+		return *responseEntity.BuildError(response.BuildEntity(NotFoundUser, GetMsg(NotFoundUser)))
 	}
 	if !user.CheckEqualPassword(loginData.Password) {
-		return *responseEntity.NewBuild(http.StatusUnauthorized, BuildEntity(Unauthorized, GetMsg(Unauthorized)))
+		return *responseEntity.NewBuild(http.StatusUnauthorized, response.BuildEntity(Unauthorized, GetMsg(Unauthorized)))
 	}
 
-	roleID, err1 := findRoleIDByUserID(user.Id)
+	roleID, err1 := findRoleIDByUserID(user.ID)
 	if err1 != nil {
-		return *responseEntity.BuildError(BuildEntity(NotFoundUserRole, GetMsg(NotFoundUserRole)))
+		return *responseEntity.BuildError(response.BuildEntity(NotFoundUserRole, GetMsg(NotFoundUserRole)))
 
 	}
 	client, err := GetClientService(appID)
 	if err != nil {
-		return *responseEntity.BuildError(BuildEntity(GenerateTokenError, GetMsg(GenerateTokenError)))
+		return *responseEntity.BuildError(response.BuildEntity(GenerateTokenError, GetMsg(GenerateTokenError)))
 	}
 	exp := time.Now().Add(time.Hour * time.Duration(1)).Unix()
 	token, tokenErr := getToken(appID, client.VerifySecret, user, roleID, exp)
 
 	if tokenErr != nil {
-		return *responseEntity.BuildError(BuildEntity(GenerateTokenError, GetMsg(GenerateTokenError)))
-	} else {
-		type data struct {
-			Account string
-			Name    string
-			Token   string
-			Exp     int64
-			Id      int64
-		}
-		d := &data{user.Account, user.Name, token, exp, user.Id}
-		return *responseEntity.BuildPostAndPut(d)
+		return *responseEntity.BuildError(response.BuildEntity(GenerateTokenError, GetMsg(GenerateTokenError)))
 	}
-
+	type data struct {
+		Account string
+		Name    string
+		Token   string
+		Exp     int64
+		ID      int64
+	}
+	d := &data{user.Account, user.Name, token, exp, user.ID}
+	return *responseEntity.BuildPostAndPut(d)
 }
 
 func getToken(appID string, key string, user SysUser, userRoleID []int64, exp int64) (string, error) {
@@ -66,7 +64,7 @@ func getToken(appID string, key string, user SysUser, userRoleID []int64, exp in
 	claims["exp"] = exp
 	claims["iat"] = time.Now().Unix()
 	claims["Issuer"] = appID
-	claims["userId"] = user.Id
+	claims["userId"] = user.ID
 	claims["account"] = user.Account
 	claims["userName"] = user.Name
 	claims["userType"] = user.UserType

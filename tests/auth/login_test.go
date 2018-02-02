@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"testing"
 	"time"
-	"yh-foundation-backend/cores"
 
 	"github.com/xwinie/glue/lib/middleware/sign"
 	. "github.com/xwinie/glue/lib/utils"
@@ -18,7 +17,7 @@ func TestLoginPost(t *testing.T) {
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	values := map[string]interface{}{
 		"UserName": "12345",
-		"Password": Md5(cores.Sha1("12345") + Sha1("Password")),
+		"Password": Md5(Sha1("12345") + Sha1("Password")),
 	}
 	jsonValue, _ := json.Marshal(values)
 	RequestURL := "/v1/login"

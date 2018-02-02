@@ -6,12 +6,12 @@ import (
 
 //SysClient 客户端管理
 type SysClient struct {
-	Id           int64
-	ClientId     string
-	Name         string
-	Secret       string
-	VerifySecret string
-	Locked       int8
+	ID           int64  `xorm:"pk bigint 'id'"`
+	ClientID     string `xorm:"varchar(100) notnull unique 'client_id'"`
+	Name         string `xorm:"varchar(200) notnull"`
+	Secret       string `xorm:"varchar(200) notnull"`
+	VerifySecret string `xorm:"varchar(200) notnull"`
+	Locked       int8   `xorm:"tinyint default(0) notnull"`
 }
 
 //getClient 获取客户端信息

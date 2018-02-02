@@ -13,9 +13,8 @@ import (
 
 //Config casbin需要的配置
 type Config struct {
-	model string
+	OpenF func() ([]Permission, error)
 	F     func(string, string) ([]Permission, string, error) //基于token的Authorization来进行数据获取 第一个是Authorization 第二个是appid
-	Open  bool                                               // 0代表非开放 1代表开放接口
 }
 
 // Permission 需要的权限结果集合
@@ -25,16 +24,7 @@ type Permission struct {
 	Method string
 }
 
-//Authorizer 权限结构
-type Authorizer struct {
-	enforcer *casbin.Enforcer
-}
-
-//RestAuth rest权限校验
-func RestAuth(c Config) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		if c.model == "" {
-			c.model = `
+const modal = `
 [request_definition]
 r = sub, obj, act
 
@@ -47,20 +37,53 @@ e = some(where (p.eft == allow))
 [matchers]
 m = r.sub == p.sub && keyMatch2(r.obj, p.obj) && regexMatch(r.act, p.act)
 `
-		}
-		var e = casbin.NewEnforcer(casbin.NewModel(c.model))
+
+//Authorizer 权限结构
+type Authorizer struct {
+	enforcer *casbin.Enforcer
+}
+
+//RestAuth rest权限校验
+func RestAuth(c Config) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		defer func() {
+			// recover from panic if one occured. Set err to nil otherwise.
+			if r := recover(); r != nil {
+				ctx.JSON(http.StatusForbidden, r)
+				return
+			}
+		}()
+
+		var e = casbin.NewEnforcer(casbin.NewModel(modal))
 		a := &Authorizer{enforcer: e}
-		permissions, userID, err := c.F(ctx.GetHeader("Authorization"), ctx.GetHeader("appid"))
+		//判断是否开放接口
+		openPermiss, err := c.OpenF()
+
 		if err != nil {
+			ctx.JSON(http.StatusForbidden, "Auth Fail"+err.Error())
+		}
+		for _, v := range openPermiss {
+			e.AddPermissionForUser(ctx.GetHeader("appid"), v.Action, v.Method)
+		}
+		if a.checkPermission(ctx.GetHeader("appid"), ctx.Request.Method, ctx.Request.URL.Path) {
+			ctx.Next()
+			return
+		}
+
+		if ctx.GetHeader("Authorization") == "" {
+			ctx.JSON(http.StatusForbidden, "miss Authorization header")
+			return
+		}
+		//权限校验
+		permissions, userID, err1 := c.F(ctx.GetHeader("Authorization"), ctx.GetHeader("appid"))
+		if err1 != nil {
 			ctx.JSON(http.StatusForbidden, "Auth Fail"+err.Error())
 		}
 		for _, v := range permissions {
 			e.AddPermissionForUser(userID, v.Action, v.Method)
 		}
-		if !c.Open && !a.checkPermission(userID, ctx.Request.Method, ctx.Request.URL.Path) {
+		if !a.checkPermission(userID, ctx.Request.Method, ctx.Request.URL.Path) {
 			ctx.JSON(http.StatusForbidden, "Auth Fail")
-		} else if c.Open && a.checkPermission(ctx.GetHeader("appid"), ctx.Request.Method, ctx.Request.URL.Path) {
-			ctx.Next()
 		}
 	}
 

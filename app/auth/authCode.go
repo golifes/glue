@@ -36,6 +36,7 @@ const (
 	QueryError                   = conf.Auth + 25
 )
 
+//Msg 错误信息
 var Msg = map[int]string{
 	Unauthorized:                 "没有权限",
 	NotFoundUser:                 "无此用户",

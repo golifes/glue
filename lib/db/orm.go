@@ -24,14 +24,18 @@ var engine *xorm.Engine
 
 // Connect connect database return osm struct
 func Connect(config Config) (err error) {
-	engine, err = xorm.NewEngine(config.DbType, fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&loc=%v&parseTime=true",
-		config.DbUser,
-		config.DbPassword,
-		config.DbHost,
-		config.DbPort,
-		config.DbName,
-		config.DbCharset,
-		url.QueryEscape("Asia/Shanghai")))
+	if config.DbType == "sqlite3" {
+		engine, err = xorm.NewEngine("sqlite3", "file::memory:?mode=memory&cache=shared&loc=Local&parseTime=true")
+	} else {
+		engine, err = xorm.NewEngine(config.DbType, fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&loc=%v&parseTime=true",
+			config.DbUser,
+			config.DbPassword,
+			config.DbHost,
+			config.DbPort,
+			config.DbName,
+			config.DbCharset,
+			url.QueryEscape("Asia/Shanghai")))
+	}
 	engine.ShowSQL()
 	return err
 }

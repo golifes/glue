@@ -8,13 +8,13 @@ import (
 
 //SysUserRole 用户角色
 type SysUserRole struct {
-	Id           int64
-	RoleId       int64
-	UserId       int64
-	DeleteStatus int8
-	Created      time.Time
-	Updated      time.Time
-	Locked       int8
+	ID           int64     `xorm:"pk bigint 'id'"`
+	RoleID       int64     `xorm:"bigint notnull 'role_id'"`
+	UserID       int64     `xorm:"bigint notnull 'user_id'"`
+	DeleteStatus int8      `xorm:"tinyint default(0) notnull"`
+	Created      time.Time `xorm:"timestamp created notnull"`
+	Updated      time.Time `xorm:"timestamp updated  notnull"`
+	Locked       int8      `xorm:"tinyint default(0) notnull"`
 }
 
 func findRoleIDByUserID(userID int64) ([]int64, error) {
