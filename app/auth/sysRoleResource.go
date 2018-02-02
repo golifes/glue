@@ -3,8 +3,8 @@ package auth
 import (
 	"time"
 
-	"github.com/xwinie/glue/lib/db"
-	"github.com/xwinie/glue/lib/middleware/casbin"
+	"github.com/xwinie/glue/core"
+	"github.com/xwinie/glue/core/middleware/casbin"
 )
 
 //SysRoleResource 角色资源
@@ -27,7 +27,7 @@ type findRoleResource struct {
 }
 
 func permissionByMultiRole(roleIds []int64, resType int8) (resource []casbin.Permission, num int64, err error) {
-	o := db.New()
+	o := core.New()
 	err = o.Table("sys_role_resource").Alias("rr").
 		Join("INNER", []string{"sys_resource", "r"}, "r.id=rr.resource_id").
 		And("r.res_type=?", resType).
@@ -36,7 +36,7 @@ func permissionByMultiRole(roleIds []int64, resType int8) (resource []casbin.Per
 }
 
 func findResourceByMultiRole(roleIds []int64, resType int8) (resource []findRoleResource, err error) {
-	o := db.New()
+	o := core.New()
 	err = o.Table("sys_role_resource").Alias("rr").Join("INNER", []string{"sys_resource", "r"}, "r.id=rr.resource_id").
 		In("rr.role_id", roleIds).
 		And("r.res_type=?", resType).

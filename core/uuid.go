@@ -1,4 +1,4 @@
-package utils
+package core
 
 //guid生成器 必须保证该结构体在程序中只初始化一次，否则有可能得到重复id
 //依照snowflake算法得来

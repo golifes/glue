@@ -1,4 +1,4 @@
-package hateoas
+package core
 
 import (
 	"encoding/json"

@@ -1,6 +1,6 @@
 package auth
 
-import "github.com/xwinie/glue/lib/middleware/casbin"
+import "github.com/xwinie/glue/core/middleware/casbin"
 
 //PermissionByMultiRole 根据角色获取权限
 func PermissionByMultiRole(roleIds []int64, resType int8) ([]casbin.Permission, int64, error) {

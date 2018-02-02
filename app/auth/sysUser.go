@@ -3,8 +3,7 @@ package auth
 import (
 	"time"
 
-	"github.com/xwinie/glue/lib/db"
-	"github.com/xwinie/glue/lib/utils"
+	"github.com/xwinie/glue/core"
 )
 
 //SysUser 用户
@@ -35,28 +34,63 @@ type QuerySysUser struct {
 
 //CheckEqualPassword Md5(Md5(Sha1("12345") + Sha1("passwod")) + salt)
 func (u SysUser) CheckEqualPassword(password string) bool {
-	return u.Password == utils.Md5(password+u.Salt)
+	return u.Password == core.Md5(password+u.Salt)
 }
 
 //EncryptionPassword 加密密码
 func (u SysUser) EncryptionPassword(password string) string {
-	return utils.Md5(password + u.Salt)
+	return core.Md5(password + u.Salt)
+}
+
+func (u SysUser) insert() error {
+	o := core.New()
+	_, err := o.Insert(u)
+	return err
+}
+func deleteUser(ID int64) error {
+	o := core.New()
+	_, err := o.Table("sys_user").Id(ID).Update(map[string]interface{}{"delete_status": 1})
+	return err
+}
+func updateUser(ID int64, m map[string]interface{}) error {
+	o := core.New()
+	_, err := o.Table("sys_user").Id(ID).Update(m)
+	return err
+}
+
+func (u SysUser) accountIsExist() (entity core.Entity) {
+	o := core.New()
+	has, err := o.Table(&u).Where("account = ?", u.Account).Exist()
+	if has || err != nil {
+		return entity.New(UserIsExist, getMsg(UserIsExist))
+	}
+	return entity.New(Success, getMsg(Success))
 }
 
 func findUserAllColums(account string) (user SysUser, err error) {
-	o := db.New()
+	o := core.New()
 	_, err = o.Table(&user).Where("account = ?", account).Get(&user)
 	return user, err
 }
+func findUserByAccount(account string) (user QuerySysUser, err error) {
+	o := core.New()
+	_, err = o.Table("sys_user").Where("account = ?", account).Get(&user)
+	return user, err
+}
 
+func findUserById(id int64) (user SysUser, err error) {
+	o := core.New()
+	_, err = o.Table(&user).Id(id).Get(&user)
+	return user, err
+}
 func userCountByPage() (num int64, err error) {
-	o := db.New()
-	num, err = o.Table(new(SysUser)).Count()
+	o := core.New()
+	num, err = o.Table("sys_user").Count()
 	return num, err
 }
 
 func userByPage(pageSize int, offset int) (users []*QuerySysUser, err error) {
-	o := db.New()
-	err = o.Limit(pageSize, offset).Find(&users)
+	o := core.New()
+	err = o.Table("sys_user").Limit(pageSize, offset).Find(&users)
 	return users, err
 }

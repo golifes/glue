@@ -1,4 +1,4 @@
-package utils
+package core
 
 // Copyright 2014 beego Author. All Rights Reserved.
 //

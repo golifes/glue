@@ -5,7 +5,7 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/xwinie/glue/lib/response"
+	"github.com/xwinie/glue/core"
 )
 
 //LoginData 登录from请求数据字段
@@ -14,11 +14,11 @@ type loginData struct {
 	Password string
 }
 
-func loginService(loginData *loginData, appID string) (responseEntity response.ResponseEntity) {
+func loginService(loginData *loginData, appID string) (responseEntity core.ResponseEntity) {
 	defer func() {
 		// recover from panic if one occured. Set err to nil otherwise.
 		if r := recover(); r != nil {
-			responseEntity.BuildError(response.BuildEntity(QueryError, getMsg(QueryError)))
+			responseEntity.BuildError(core.BuildEntity(QueryError, getMsg(QueryError)))
 			return
 		}
 	}()
@@ -26,26 +26,26 @@ func loginService(loginData *loginData, appID string) (responseEntity response.R
 	user, err := findUserAllColums(loginData.UserName)
 
 	if &user.ID == nil && err != nil {
-		return *responseEntity.BuildError(response.BuildEntity(NotFoundUser, getMsg(NotFoundUser)))
+		return *responseEntity.BuildError(core.BuildEntity(NotFoundUser, getMsg(NotFoundUser)))
 	}
 	if !user.CheckEqualPassword(loginData.Password) {
-		return *responseEntity.NewBuild(http.StatusUnauthorized, response.BuildEntity(Unauthorized, getMsg(Unauthorized)))
+		return *responseEntity.NewBuild(http.StatusUnauthorized, core.BuildEntity(Unauthorized, getMsg(Unauthorized)))
 	}
 
 	roleID, err1 := findRoleIDByUserID(user.ID)
 	if err1 != nil {
-		return *responseEntity.BuildError(response.BuildEntity(NotFoundUserRole, getMsg(NotFoundUserRole)))
+		return *responseEntity.BuildError(core.BuildEntity(NotFoundUserRole, getMsg(NotFoundUserRole)))
 
 	}
 	client, err := GetClientService(appID)
 	if err != nil {
-		return *responseEntity.BuildError(response.BuildEntity(GenerateTokenError, getMsg(GenerateTokenError)))
+		return *responseEntity.BuildError(core.BuildEntity(GenerateTokenError, getMsg(GenerateTokenError)))
 	}
 	exp := time.Now().Add(time.Hour * time.Duration(1)).Unix()
 	token, tokenErr := getToken(appID, client.VerifySecret, user, roleID, exp)
 
 	if tokenErr != nil {
-		return *responseEntity.BuildError(response.BuildEntity(GenerateTokenError, getMsg(GenerateTokenError)))
+		return *responseEntity.BuildError(core.BuildEntity(GenerateTokenError, getMsg(GenerateTokenError)))
 	}
 	type data struct {
 		Account string

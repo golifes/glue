@@ -3,8 +3,8 @@ package auth
 import (
 	"time"
 
-	"github.com/xwinie/glue/lib/db"
-	"github.com/xwinie/glue/lib/middleware/casbin"
+	"github.com/xwinie/glue/core"
+	"github.com/xwinie/glue/core/middleware/casbin"
 )
 
 //SysResource 资源
@@ -25,7 +25,7 @@ type SysResource struct {
 //OpenPermission 根据角色获取权限
 func openPermission() ([]casbin.Permission, error) {
 	permiss := new([]casbin.Permission)
-	o := db.New()
+	o := core.New()
 	err := o.Table(SysResource{}).Cols("code", "action", "method").Where("is_open = ?", 1).Find(permiss)
 	return *permiss, err
 }

@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mitchellh/mapstructure"
 	"github.com/xwinie/glue/app/auth"
-	"github.com/xwinie/glue/lib/middleware/casbin"
-	"github.com/xwinie/glue/lib/middleware/sign"
+	"github.com/xwinie/glue/core/middleware/casbin"
+	"github.com/xwinie/glue/core/middleware/sign"
 )
 
 //Routers 系统路由
@@ -18,8 +18,9 @@ func Routers(s *gin.Engine) {
 		v1.POST("/login", new(auth.LoginController).Post())
 		user := v1.Group("/user")
 		{
-			user.GET("/", new(auth.SysResourceController).MenusByUserID())
+			user.GET("/", new(auth.SysUserController).UserByPage())
 		}
+		v1.GET("/menus/:userId", new(auth.SysResourceController).MenusByUserID())
 	}
 	s.GET("/a", func(c *gin.Context) {
 		c.JSON(200, gin.H{

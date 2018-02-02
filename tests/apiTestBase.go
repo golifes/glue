@@ -12,28 +12,27 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/xwinie/glue/lib/db"
-	"github.com/xwinie/glue/lib/middleware/sign"
-	"github.com/xwinie/glue/lib/utils"
+	"github.com/xwinie/glue/core"
+	"github.com/xwinie/glue/core/middleware/sign"
 	"github.com/xwinie/glue/migrate"
 	"github.com/xwinie/glue/router"
 )
 
 //Engine 获取engine
 func app() *gin.Engine {
-	dbconfig := db.Config{}
+	dbconfig := core.Config{}
 	dbconfig.DbType = "sqlite3"
 	dbconfig.DbCharset = "utf8mb4"
 	dbconfig.DbPath = []string{"/Users/bobo/go/src/github.com/xwinie/glue/app"}
 
 	s := gin.Default()
-	err := db.Connect(dbconfig)
+	err := core.Connect(dbconfig)
 	if err != nil {
 		log.Fatal("init db error:", err.Error())
 	}
 
 	router.Routers(s)
-	o := db.New()
+	o := core.New()
 	migrate.Migrate(o)
 	return s
 }
@@ -79,7 +78,7 @@ func Tokin(t *testing.T) string {
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	values := map[string]interface{}{
 		"UserName": "12345",
-		"Password": utils.Md5(utils.Sha1("12345") + utils.Sha1("Password")),
+		"Password": core.Md5(core.Sha1("12345") + core.Sha1("Password")),
 	}
 	jsonValue, _ := json.Marshal(values)
 	RequestURL := "/v1/login"

@@ -5,8 +5,7 @@ import (
 
 	"github.com/xormplus/xorm"
 	"github.com/xwinie/glue/app/auth"
-	"github.com/xwinie/glue/lib/db"
-	"github.com/xwinie/glue/lib/utils"
+	"github.com/xwinie/glue/core"
 )
 
 //Migrate 自动升级
@@ -24,7 +23,7 @@ func Migrate(o *xorm.Engine) {
 }
 
 func initAuthData() {
-	G, _ := utils.NewGUID(1)
+	G, _ := core.NewGUID(1)
 	id, _ := G.NextID()
 	client := new(auth.SysClient)
 	client.ID = id
@@ -35,10 +34,10 @@ func initAuthData() {
 	user := new(auth.SysUser)
 	userID, _ := G.NextID()
 	user.ID = userID
-	salt := utils.RandStringByLen(6)
+	salt := core.RandStringByLen(6)
 	user.Account = "12345"
 	user.Name = "测试员工"
-	user.Password = utils.Md5(utils.Md5(utils.Sha1("12345")+utils.Sha1("Password")) + salt)
+	user.Password = core.Md5(core.Md5(core.Sha1("12345")+core.Sha1("Password")) + salt)
 	user.Salt = salt
 	role := new(auth.SysRole)
 	RoleID, _ := G.NextID()
@@ -125,7 +124,7 @@ func initAuthData() {
 		{ID: 10032, RoleID: RoleID, ResourceID: 10032},
 		{ID: 10033, RoleID: RoleID, ResourceID: 10033},
 	}
-	o := db.New()
+	o := core.New()
 	o.Insert(client)
 	o.Insert(user)
 	o.Insert(role)

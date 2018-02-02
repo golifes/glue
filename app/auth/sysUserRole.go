@@ -3,7 +3,7 @@ package auth
 import (
 	"time"
 
-	"github.com/xwinie/glue/lib/db"
+	"github.com/xwinie/glue/core"
 )
 
 //SysUserRole 用户角色
@@ -19,7 +19,7 @@ type SysUserRole struct {
 
 func findRoleIDByUserID(userID int64) ([]int64, error) {
 	var roleIds []int64
-	o := db.New()
+	o := core.New()
 	err := o.Table("sys_user_role").Cols("role_id").Where("user_id = ?", userID).Find(&roleIds)
 	return roleIds, err
 }

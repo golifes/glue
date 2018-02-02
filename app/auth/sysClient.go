@@ -1,8 +1,6 @@
 package auth
 
-import (
-	"github.com/xwinie/glue/lib/db"
-)
+import "github.com/xwinie/glue/core"
 
 //SysClient 客户端管理
 type SysClient struct {
@@ -17,7 +15,7 @@ type SysClient struct {
 //getClient 获取客户端信息
 func getClient(clientID string) (SysClient, error) {
 	client := new(SysClient)
-	o := db.New()
+	o := core.New()
 	_, err := o.Table(client).Where("client_id = ?", clientID).Get(client)
 	return *client, err
 }
