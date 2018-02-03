@@ -54,7 +54,7 @@ func deleteUser(ID int64) error {
 }
 func updateUser(ID int64, m map[string]interface{}) error {
 	o := core.New()
-	_, err := o.Table("sys_user").Id(ID).Update(m)
+	_, err := o.Table("sys_user").Where("id = ?", ID).Update(m)
 	return err
 }
 

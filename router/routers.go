@@ -18,7 +18,12 @@ func Routers(s *gin.Engine) {
 		v1.POST("/login", new(auth.LoginController).Post())
 		user := v1.Group("/user")
 		{
-			user.GET("/", new(auth.SysUserController).UserByPage())
+			userCtl := new(auth.SysUserController)
+			user.GET("", userCtl.UserByPage())
+			user.GET("/:account", userCtl.Get())
+			user.POST("", userCtl.Post())
+			user.PUT("/:id", userCtl.Put())
+			user.DELETE("/:id", userCtl.Delete())
 		}
 		v1.GET("/menus/:userId", new(auth.SysResourceController).MenusByUserID())
 	}
@@ -42,7 +47,7 @@ func getRestAutz(authorization, appid string) ([]casbin.Permission, string, erro
 		Exp      float64
 		Iat      int64
 		Issuer   string
-		UserID   int64
+		UserId   int64
 		userType int8
 		Account  string
 		UserName string
@@ -60,8 +65,8 @@ func getRestAutz(authorization, appid string) ([]casbin.Permission, string, erro
 	}
 	var permiss []casbin.Permission
 
-	permiss, _, err = auth.PermissionByMultiRole(claims.Role, 0)
-	return permiss, string(claims.UserID), err
+	permiss, err = auth.PermissionByMultiRole(claims.Role, 0)
+	return permiss, claims.Account, err
 }
 
 func getOpenRestAutz() ([]casbin.Permission, error) {

@@ -19,7 +19,7 @@ type Config struct {
 
 // Permission 需要的权限结果集合
 type Permission struct {
-	ID     string
+	Code   string
 	Action string
 	Method string
 }

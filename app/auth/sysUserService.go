@@ -17,13 +17,15 @@ func findUserCountByPageService() int64 {
 
 //createUser 创建用户
 func createUser(u SysUser) (responseEntity core.ResponseEntity) {
-	G, _ := core.NewGUID(2)
-	id, _ := G.NextID()
-	u.ID = id
 	isExist := u.accountIsExist()
 	if isExist.Code != 100000 {
 		return *responseEntity.BuildError(core.BuildEntity(UserIsExist, getMsg(UserIsExist)))
 	}
+	G, _ := core.NewGUID(1)
+	id, _ := G.NextID()
+	u.ID = id
+	u.Salt = core.RandStringByLen(10)
+
 	err := u.insert()
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(CreateUserError, getMsg(CreateUserError)))
@@ -34,7 +36,11 @@ func createUser(u SysUser) (responseEntity core.ResponseEntity) {
 	links.Add(core.LinkTo("/v1/user/"+strconv.FormatInt(id, 10), "self", "DELETE", "根据id删除用户信息"))
 	links.Add(core.LinkTo("/v1/user/"+strconv.FormatInt(id, 10), "self", "PUT", "根据id修改用户信息"))
 	hateoas.AddLinks(links)
-	return *responseEntity.BuildPostAndPut(hateoas)
+	type data struct {
+		*core.Hateoas
+	}
+	d := &data{&hateoas}
+	return *responseEntity.BuildPostAndPut(d)
 }
 
 func deleteUserService(id int64) (responseEntity core.ResponseEntity) {
@@ -47,7 +53,7 @@ func deleteUserService(id int64) (responseEntity core.ResponseEntity) {
 
 func updateUserService(id int64, m map[string]interface{}) (responseEntity core.ResponseEntity) {
 
-	if _, ok := m["Account"]; !ok {
+	if _, ok := m["Account"]; ok {
 		delete(m, "Account")
 	}
 	err := updateUser(id, m)
@@ -61,7 +67,11 @@ func updateUserService(id int64, m map[string]interface{}) (responseEntity core.
 	links.Add(core.LinkTo("/v1/user/"+strconv.FormatInt(id, 10), "self", "DELETE", "根据id删除用户信息"))
 	links.Add(core.LinkTo("/v1/user/"+strconv.FormatInt(id, 10), "self", "PUT", "根据id修改用户信息"))
 	hateoas.AddLinks(links)
-	return *responseEntity.BuildPostAndPut(hateoas)
+	type data struct {
+		*core.Hateoas
+	}
+	d := &data{&hateoas}
+	return *responseEntity.BuildPostAndPut(d)
 }
 func findUserByAccountService(account string) (responseEntity core.ResponseEntity) {
 	u, err := findUserByAccount(account)

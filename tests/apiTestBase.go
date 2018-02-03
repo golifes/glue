@@ -3,7 +3,6 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"testing"
@@ -18,22 +17,24 @@ import (
 	"github.com/xwinie/glue/router"
 )
 
-//Engine 获取engine
-func app() *gin.Engine {
+func init() {
 	dbconfig := core.Config{}
 	dbconfig.DbType = "sqlite3"
 	dbconfig.DbCharset = "utf8mb4"
 	dbconfig.DbPath = []string{"/Users/bobo/go/src/github.com/xwinie/glue/app"}
-
-	s := gin.Default()
 	err := core.Connect(dbconfig)
 	if err != nil {
 		log.Fatal("init db error:", err.Error())
 	}
 
-	router.Routers(s)
 	o := core.New()
 	migrate.Migrate(o)
+}
+
+//Engine 获取engine
+func app() *gin.Engine {
+	s := gin.Default()
+	router.Routers(s)
 	return s
 }
 
@@ -85,6 +86,5 @@ func Tokin(t *testing.T) string {
 	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
 	e := TestAPI(t, method, RequestURL, "app1", signature, timestamp, "")
 	r := e.WithJSON(values).Expect().Status(http.StatusCreated).JSON().Object()
-	fmt.Println(1111, r)
 	return r.Value("Token").String().Raw()
 }

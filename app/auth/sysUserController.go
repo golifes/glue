@@ -62,3 +62,11 @@ func (c *SysUserController) Delete() func(*gin.Context) {
 		c.JSON(response.StatusCode, response.Data)
 	}
 }
+
+//Get 根据账号获取数据
+func (c *SysUserController) Get() func(*gin.Context) {
+	return func(c *gin.Context) {
+		response := findUserByAccountService(c.Param("account"))
+		c.JSON(response.StatusCode, response.Data)
+	}
+}

@@ -53,7 +53,7 @@ func (p *Paginator) Nums() int64 {
 
 // SetNums Sets the total number of items.
 func (p *Paginator) SetNums(nums interface{}) {
-	p.nums, _ = toInt64(nums)
+	p.nums, _ = ToInt64(nums)
 }
 
 // Page Returns the current page.
