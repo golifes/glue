@@ -6,7 +6,7 @@ import (
 	"github.com/xwinie/glue/core"
 )
 
-//FindUserCountByPageService 分页获取总数
+//findUserCountByPageService 分页获取总数
 func findUserCountByPageService() int64 {
 	num, err := userCountByPage()
 	if err != nil {

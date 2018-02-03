@@ -60,3 +60,16 @@ func TestUserByPage(t *testing.T) {
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
 	e.WithQueryString(values.Encode()).Expect().Status(http.StatusOK)
 }
+
+func TestUserDelete(t *testing.T) {
+	o := core.New()
+	var user auth.SysUser
+	o.Table("sys_user").Where("account = ?", "1234567").Get(&user)
+	method := "DELETE"
+	timestamp := time.Now().Format("2006-01-02 15:04:05")
+	RequestURL := "/v1/user/" + strconv.FormatInt(user.ID, 10)
+	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
+	tokin := tests.Tokin(t)
+	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
+	e.Expect().Status(http.StatusNoContent)
+}

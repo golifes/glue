@@ -10,8 +10,8 @@ func OpenPermission() ([]casbin.Permission, error) {
 	return openPermission()
 }
 
-//MenuByUserIDService 获取用户菜单
-func MenuByUserIDService(userID int64) (responseEntity core.ResponseEntity) {
+// 获取用户菜单
+func menuByUserIDService(userID int64) (responseEntity core.ResponseEntity) {
 	roleID, _ := findRoleIDByUserID(userID)
 	menus, err := findResourceByMultiRole(roleID, 1)
 	if err != nil {

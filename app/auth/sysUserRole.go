@@ -23,3 +23,24 @@ func findRoleIDByUserID(userID int64) ([]int64, error) {
 	err := o.Table("sys_user_role").Cols("role_id").Where("user_id = ?", userID).Find(&roleIds)
 	return roleIds, err
 }
+func findRoleByUserID(userID int64) ([]SysRole, error) {
+	var m []SysRole
+	o := core.New()
+	err := o.Table("sys_user_role").Alias("ur").Join("INNER", []string{"sys_role", "r"}, "r.id=rr.role_id").
+		Where("ur.role_id=?", userID).
+		Cols("r.*").
+		Find(&m)
+	return m, err
+}
+
+func insertUserRole(m []SysUserRole) error {
+	o := core.New()
+	_, err := o.Insert(&m)
+	return err
+}
+
+func deleteUserRole(userId int64) error {
+	o := core.New()
+	_, err := o.Where("user_id = ?", userId).Delete(new(SysUserRole))
+	return err
+}

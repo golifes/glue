@@ -47,17 +47,6 @@ func (u SysUser) insert() error {
 	_, err := o.Insert(u)
 	return err
 }
-func deleteUser(ID int64) error {
-	o := core.New()
-	_, err := o.Table("sys_user").Id(ID).Update(map[string]interface{}{"delete_status": 1})
-	return err
-}
-func updateUser(ID int64, m map[string]interface{}) error {
-	o := core.New()
-	_, err := o.Table("sys_user").Where("id = ?", ID).Update(m)
-	return err
-}
-
 func (u SysUser) accountIsExist() (entity core.Entity) {
 	o := core.New()
 	has, err := o.Table(&u).Where("account = ?", u.Account).Exist()
@@ -65,6 +54,17 @@ func (u SysUser) accountIsExist() (entity core.Entity) {
 		return entity.New(UserIsExist, getMsg(UserIsExist))
 	}
 	return entity.New(Success, getMsg(Success))
+}
+
+func deleteUser(ID int64) error {
+	o := core.New()
+	_, err := o.Table("sys_user").Where("id = ?", ID).Update(map[string]interface{}{"delete_status": 1})
+	return err
+}
+func updateUser(ID int64, m map[string]interface{}) error {
+	o := core.New()
+	_, err := o.Table("sys_user").Where("id = ?", ID).Update(m)
+	return err
 }
 
 func findUserAllColums(account string) (user SysUser, err error) {

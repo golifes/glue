@@ -25,6 +25,15 @@ func Routers(s *gin.Engine) {
 			user.PUT("/:id", userCtl.Put())
 			user.DELETE("/:id", userCtl.Delete())
 		}
+		role := v1.Group("/user")
+		{
+			ctl := new(auth.SysUserController)
+			role.GET("", ctl.RoleByPage())
+			role.GET("/:code", ctl.Get())
+			role.POST("", ctl.Post())
+			role.PUT("/:id", ctl.Put())
+			role.DELETE("/:id", ctl.Delete())
+		}
 		v1.GET("/menus/:userId", new(auth.SysResourceController).MenusByUserID())
 	}
 	s.GET("/a", func(c *gin.Context) {

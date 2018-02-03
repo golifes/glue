@@ -45,3 +45,24 @@ func findResourceByMultiRole(roleIds []int64, resType int8) (resource []findRole
 		Find(&resource)
 	return resource, err
 }
+
+func findResourceByRoleId(roleId int64) (resource []SysResource, err error) {
+	o := core.New()
+	err = o.Table("sys_role_resource").Alias("rr").Join("INNER", []string{"sys_resource", "r"}, "r.id=rr.resource_id").
+		Where("rr.role_id=?", roleId).
+		Cols("r.*").
+		Find(&resource)
+	return resource, err
+}
+
+func insertRoleResource(m []SysRoleResource) error {
+	o := core.New()
+	_, err := o.Insert(&m)
+	return err
+}
+
+func deleteRoleResource(roleId int64) error {
+	o := core.New()
+	_, err := o.Where("role_id = ?", roleId).Delete(new(SysRoleResource))
+	return err
+}

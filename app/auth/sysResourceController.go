@@ -19,7 +19,7 @@ func (c *SysResourceController) MenusByUserID() func(*gin.Context) {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "请求异常"})
 		}
-		response := MenuByUserIDService(i64)
+		response := menuByUserIDService(i64)
 		c.JSON(response.StatusCode, response.Data)
 	}
 }
