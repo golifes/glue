@@ -69,6 +69,12 @@ func updateClientService(id int64, m map[string]interface{}) (responseEntity cor
 	if _, ok := m["ClientID"]; ok {
 		delete(m, "ClientID")
 	}
+	if _, ok := m["Secret"]; ok {
+		delete(m, "Secret")
+	}
+	if _, ok := m["VerifySecret"]; ok {
+		delete(m, "VerifySecret")
+	}
 	err := updateClient(id, m)
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(UpdateClientError, getMsg(UpdateClientError)))

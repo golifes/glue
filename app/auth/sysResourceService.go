@@ -12,7 +12,10 @@ func OpenPermission() ([]casbin.Permission, error) {
 
 // 获取用户菜单
 func menuByUserIDService(userID int64) (responseEntity core.ResponseEntity) {
-	roleID, _ := findRoleIDByUserID(userID)
+	roleID, err := findRoleIDByUserID(userID)
+	if err != nil {
+		return *responseEntity.BuildError(core.BuildEntity(QueryError, getMsg(QueryError)))
+	}
 	menus, err := findResourceByMultiRole(roleID, 1)
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(QueryError, getMsg(QueryError)))
@@ -39,4 +42,11 @@ func findResourceByPageService(p *core.Paginator) (responseEntity core.ResponseE
 		return *responseEntity.BuildError(core.BuildEntity(QueryError, getMsg(QueryError)))
 	}
 	return *responseEntity.Build(d)
+}
+func findResourceByCodeService(code string) (responseEntity core.ResponseEntity) {
+	u, err := findResourceByCode(code)
+	if err != nil {
+		return *responseEntity.BuildError(core.BuildEntity(QueryError, getMsg(QueryError)))
+	}
+	return *responseEntity.Build(u)
 }

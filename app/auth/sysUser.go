@@ -9,7 +9,7 @@ import (
 //SysUser 用户
 type SysUser struct {
 	ID           int64     `xorm:"pk bigint 'id'"`
-	Account      string    `xorm:"unique notnull"`
+	Account      string    `xorm:"unique varchar(100) notnull"`
 	Name         string    `xorm:"varchar(200) notnull"`
 	UserType     int8      `xorm:"tinyint default(0) notnull"` //0是第三方用户1是self
 	Password     string    `xorm:"varchar(200) notnull"`

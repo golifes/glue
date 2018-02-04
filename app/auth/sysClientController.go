@@ -12,8 +12,7 @@ import (
 type SysClientController struct {
 }
 
-//RoleByPage 分页获取数据
-func (c *SysClientController) RoleByPage() func(echo.Context) error {
+func (c *SysClientController) ClientByPage() func(echo.Context) error {
 	return func(c echo.Context) error {
 		pageSize := c.QueryParam("perPage")
 		pageSizeInt, err := strconv.Atoi(pageSize)
@@ -45,13 +44,8 @@ func (c *SysClientController) Put() func(echo.Context) error {
 func (c *SysClientController) Delete() func(echo.Context) error {
 	return func(c echo.Context) error {
 		ID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-		var lock int8
-		if err := c.Bind(&lock); err == nil {
-			response := deleteClientService(ID, lock)
-			return c.JSON(response.StatusCode, response.Data)
-		} else {
-			return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
-		}
+		response := deleteClientService(ID, 1)
+		return c.JSON(response.StatusCode, response.Data)
 	}
 }
 

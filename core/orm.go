@@ -17,6 +17,7 @@ type Config struct {
 	DbPort     string
 	DbPath     []string
 	DbCharset  string
+	DbShowSql  bool
 }
 
 //engine 定义全局变量
@@ -36,7 +37,7 @@ func Connect(config Config) (err error) {
 			config.DbCharset,
 			url.QueryEscape("Asia/Shanghai")))
 	}
-	// engine.ShowSQL()
+	engine.ShowSQL(config.DbShowSql)
 	return err
 }
 

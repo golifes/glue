@@ -41,3 +41,8 @@ func resourceByPage(pageSize int, offset int) (m []*SysResource, err error) {
 	err = o.Table("sys_resource").Limit(pageSize, offset).Find(&m)
 	return m, err
 }
+func findResourceByCode(code string) (m SysResource, err error) {
+	o := core.New()
+	_, err = o.Where("code = ?", code).Get(&m)
+	return m, err
+}

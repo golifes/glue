@@ -24,3 +24,23 @@ func (c *SysResourceController) MenusByUserID() func(echo.Context) error {
 		return c.JSON(response.StatusCode, response.Data)
 	}
 }
+
+func (c *SysResourceController) ResourceByPage() func(echo.Context) error {
+	return func(c echo.Context) error {
+		pageSize := c.QueryParam("perPage")
+		pageSizeInt, err := strconv.Atoi(pageSize)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
+		}
+		counts := findResourceCountByPageService()
+		page := core.NewPaginator(c.Request(), pageSizeInt, counts)
+		response := findResourceByPageService(page)
+		return c.JSON(response.StatusCode, response.Data)
+	}
+}
+func (c *SysResourceController) ResourceByCode() func(echo.Context) error {
+	return func(c echo.Context) error {
+		response := findResourceByCodeService(c.Param("code"))
+		return c.JSON(response.StatusCode, response.Data)
+	}
+}

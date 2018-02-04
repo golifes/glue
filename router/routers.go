@@ -34,7 +34,17 @@ func Routers(s *echo.Echo) {
 	role.DELETE("/:id", roleCtl.Delete())
 	role.GET("/:id/resource", roleCtl.GetResourceByRoleID())
 	role.POST("/:id/resource", roleCtl.RoleAllotResource())
-
+	resource := v1.Group("/resource")
+	resourceCtl := new(auth.SysResourceController)
+	resource.GET("", resourceCtl.ResourceByPage())
+	resource.GET("/:code", resourceCtl.ResourceByCode())
+	v1.GET("/menus/:userId", resourceCtl.MenusByUserID())
+	client := v1.Group("/client")
+	clientCtl := new(auth.SysClientController)
+	client.GET("", clientCtl.ClientByPage())
+	client.GET("/default", clientCtl.Get())
+	client.PUT("/:id", clientCtl.Put())
+	client.DELETE("/:id", clientCtl.Delete())
 	s.GET("/a", func(c echo.Context) error {
 		return c.String(200, "Hello, World!")
 	})

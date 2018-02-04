@@ -18,12 +18,12 @@ type SysRoleResource struct {
 	Locked       int8      `xorm:"tinyint default(0) notnull"`
 }
 
-type findRoleResource struct {
-	code       string
-	resourceID int64 `xorm:" 'resource_id'"`
-	action     string
-	method     string
-	roleID     int64 `xorm:"'role_id'"`
+type FindRoleResource struct {
+	Code       string
+	ResourceID int64 `xorm:" 'resource_id'"`
+	Action     string
+	Method     string
+	RoleID     int64 `xorm:"'role_id'"`
 }
 
 func permissionByMultiRole(roleIds interface{}, resType int8) (resource []casbin.Permission, err error) {
@@ -36,12 +36,12 @@ func permissionByMultiRole(roleIds interface{}, resType int8) (resource []casbin
 	return resource, err
 }
 
-func findResourceByMultiRole(roleIds []int64, resType int8) (resource []findRoleResource, err error) {
+func findResourceByMultiRole(roleIds []int64, resType int8) (resource []FindRoleResource, err error) {
 	o := core.New()
 	err = o.Table("sys_role_resource").Alias("rr").Join("INNER", []string{"sys_resource", "r"}, "r.id=rr.resource_id").
 		In("rr.role_id", roleIds).
 		And("r.res_type=?", resType).
-		Cols("r.code", "r.id resource_id", "r.action", "r.method", "rr.id role_Id").
+		Cols("r.code", "rr.resource_id", "r.action", "r.method", "rr.role_id").
 		Find(&resource)
 	return resource, err
 }
