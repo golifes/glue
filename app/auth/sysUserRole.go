@@ -26,8 +26,8 @@ func findRoleIDByUserID(userID int64) ([]int64, error) {
 func findRoleByUserID(userID int64) ([]SysRole, error) {
 	var m []SysRole
 	o := core.New()
-	err := o.Table("sys_user_role").Alias("ur").Join("INNER", []string{"sys_role", "r"}, "r.id=rr.role_id").
-		Where("ur.role_id=?", userID).
+	err := o.Table("sys_user_role").Alias("ur").Join("INNER", []string{"sys_role", "r"}, "r.id=ur.role_id").
+		Where("ur.user_id=?", userID).
 		Cols("r.*").
 		Find(&m)
 	return m, err

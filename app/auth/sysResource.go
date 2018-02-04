@@ -29,3 +29,15 @@ func openPermission() ([]casbin.Permission, error) {
 	err := o.Table(SysResource{}).Cols("code", "action", "method").Where("is_open = ?", 1).Find(permiss)
 	return *permiss, err
 }
+
+func resourceCountByPage() (num int64, err error) {
+	o := core.New()
+	num, err = o.Table("sys_resource").Count()
+	return num, err
+}
+
+func resourceByPage(pageSize int, offset int) (m []*SysResource, err error) {
+	o := core.New()
+	err = o.Table("sys_resource").Limit(pageSize, offset).Find(&m)
+	return m, err
+}

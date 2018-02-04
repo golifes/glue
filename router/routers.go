@@ -2,7 +2,7 @@ package router
 
 import (
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo"
 	"github.com/mitchellh/mapstructure"
 	"github.com/xwinie/glue/app/auth"
 	"github.com/xwinie/glue/core/middleware/casbin"
@@ -10,40 +10,33 @@ import (
 )
 
 //Routers 系统路由
-func Routers(s *gin.Engine) {
+func Routers(s *echo.Echo) {
 	s.Use(sign.New(sign.Config{F: getAppSecret, Timeout: 100}))
 	s.Use(casbin.RestAuth(casbin.Config{OpenF: getOpenRestAutz, F: getRestAutz}))
+
 	v1 := s.Group("/v1")
-	{
-		v1.POST("/login", new(auth.LoginController).Post())
-		user := v1.Group("/user")
-		{
-			ctl := new(auth.SysUserController)
-			user.GET("", ctl.UserByPage())
-			user.GET(":account", ctl.Get())
-			user.POST("", ctl.Post())
-			user.PUT(":id", ctl.Put())
-			user.DELETE(":id", ctl.Delete())
-			user.GET(":id/role", ctl.GetRoleByUserID())
-			user.POST(":id/role", ctl.UserAllotRole())
-		}
-		role := v1.Group("/role")
-		{
-			ctl := new(auth.SysRoleController)
-			role.GET("", ctl.RoleByPage())
-			role.GET("/:code", ctl.Get())
-			role.POST("", ctl.Post())
-			role.PUT("/:id", ctl.Put())
-			role.DELETE("/:id", ctl.Delete())
-			// role.GET("/:id/resource", ctl.GetResourceByRoleID())
-			role.POST("/:id/resource", ctl.RoleAllotResource())
-		}
-		v1.GET("/menus/:userId", new(auth.SysResourceController).MenusByUserID())
-	}
-	s.GET("/a", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
+	v1.POST("/login", new(auth.LoginController).Post())
+	user := v1.Group("/user")
+	usrCtl := new(auth.SysUserController)
+	user.POST("", usrCtl.Post())
+	user.PUT("/:id", usrCtl.Put())
+	user.GET("", usrCtl.UserByPage())
+	user.GET("/:account", usrCtl.Get())
+	user.DELETE("/:id", usrCtl.Delete())
+	user.GET("/:id/role", usrCtl.GetRoleByUserID())
+	user.POST("/:id/role", usrCtl.UserAllotRole())
+	role := v1.Group("/role")
+	roleCtl := new(auth.SysRoleController)
+	role.POST("", roleCtl.Post())
+	role.PUT("/:id", roleCtl.Put())
+	role.GET("", roleCtl.RoleByPage())
+	role.GET("/:code", roleCtl.Get())
+	role.DELETE("/:id", roleCtl.Delete())
+	role.GET("/:id/resource", roleCtl.GetResourceByRoleID())
+	role.POST("/:id/resource", roleCtl.RoleAllotResource())
+
+	s.GET("/a", func(c echo.Context) error {
+		return c.String(200, "Hello, World!")
 	})
 
 }

@@ -16,105 +16,101 @@ import (
 	"github.com/xwinie/glue/tests"
 )
 
-func TestUserPost(t *testing.T) {
+func TestRolePost(t *testing.T) {
 	method := "POST"
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	values := map[string]interface{}{
-		"Account":  "1234567",
-		"Password": core.Md5(core.Sha1("1234567") + core.Sha1("Password")),
-		"Name":     "测试",
+		"Code": "1234567",
+		"Name": "测试角色",
 	}
 	jsonValue, _ := json.Marshal(values)
-	RequestURL := "/v1/user"
+	RequestURL := "/v1/role"
 	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
 	e.WithJSON(values).Expect().Status(http.StatusCreated)
 }
-func TestUserPut(t *testing.T) {
+func TestRolePut(t *testing.T) {
 	o := core.New()
-	var user auth.SysUser
-	o.Table("sys_user").Where("account = ?", "1234567").Get(&user)
+	var m auth.SysRole
+	o.Table("sys_role").Where("code = ?", "1234567").Get(&m)
 	method := "PUT"
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	values := map[string]interface{}{
-		"Account": "12345678",
-		"Name":    "测试2",
+		"Code": "12345678",
+		"Name": "测试角色2",
 	}
 	jsonValue, _ := json.Marshal(values)
-	RequestURL := "/v1/user/" + strconv.FormatInt(user.ID, 10)
+	RequestURL := "/v1/role/" + strconv.FormatInt(m.ID, 10)
 	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
 	e.WithJSON(values).Expect().Status(http.StatusCreated)
 }
-func TestUserByPage(t *testing.T) {
+func TestRoleByPage(t *testing.T) {
 	method := "GET"
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	values := make(url.Values)
 	values.Add("p", "1")
 	values.Add("perPage", "10")
-	RequestURL := "/v1/user"
+	RequestURL := "/v1/role"
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL+"?"+values.Encode(), timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
 	e.WithQueryString(values.Encode()).Expect().Status(http.StatusOK)
 }
-func TestUserByAccount(t *testing.T) {
+func TestRoleByAccount(t *testing.T) {
 	method := "GET"
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	RequestURL := "/v1/user/1234567"
+	RequestURL := "/v1/role/1234567"
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
 	e.Expect().Status(http.StatusOK)
 }
 
-func TestUserDelete(t *testing.T) {
+func TestRoleDelete(t *testing.T) {
 	o := core.New()
-	var user auth.SysUser
-	o.Table("sys_user").Where("account = ?", "1234567").Get(&user)
+	var m auth.SysRole
+	o.Table("sys_role").Where("code = ?", "1234567").Get(&m)
 	method := "DELETE"
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	RequestURL := "/v1/user/" + strconv.FormatInt(user.ID, 10)
+	RequestURL := "/v1/role/" + strconv.FormatInt(m.ID, 10)
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
 	e.Expect().Status(http.StatusNoContent)
 }
 
-func TestUserAllotRole(t *testing.T) {
-	user := new(auth.SysUser)
-	user.ID = 10
-	salt := core.RandStringByLen(6)
-	user.Account = "10"
-	user.Name = "测试员工10"
-	user.Password = core.Md5(core.Md5(core.Sha1("12345")+core.Sha1("Password")) + salt)
-	user.Salt = salt
-	role := []auth.SysRole{
-		{ID: 10, Code: "10", Name: "测试管理员10"},
-		{ID: 11, Code: "11", Name: "测试管理员11"},
+func TestRoleAllotResource(t *testing.T) {
+	role := new(auth.SysRole)
+	role.ID = 100
+	role.Code = "100"
+	role.Name = "管理员100"
+	resource := []auth.SysResource{
+		{ID: 1, Code: "1", Action: "/v1/test1", Method: "POST", Name: "测试", IsOpen: 0, ResType: 0},
+		{ID: 2, Code: "2", Action: "/v1/test2", Method: "POST", Name: "测试", IsOpen: 0, ResType: 0},
 	}
 	o := core.New()
-	o.Insert(user)
 	o.Insert(role)
+	o.Insert(resource)
 	method := "POST"
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	values := map[string]interface{}{
-		"roleId": []int64{int64(10), int64(11)},
+		"ResourceId": []int64{int64(1), int64(2)},
 	}
 	jsonValue, _ := json.Marshal(values)
-	RequestURL := "/v1/user/" + strconv.FormatInt(10, 10) + "/role"
+	RequestURL := "/v1/role/" + strconv.FormatInt(100, 10) + "/resource"
 	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
 	e.WithJSON(values).Expect().Status(http.StatusOK)
 }
 
-func TestRoleByUserID(t *testing.T) {
+func TestResourceByRoleID(t *testing.T) {
 	method := "GET"
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	RequestURL := "/v1/user/10/role"
+	RequestURL := "/v1/role/100/resource"
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)

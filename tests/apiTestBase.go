@@ -8,8 +8,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
+
 	"github.com/gavv/httpexpect"
-	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/xwinie/glue/core"
 	"github.com/xwinie/glue/core/middleware/sign"
@@ -32,8 +34,11 @@ func init() {
 }
 
 //Engine 获取engine
-func app() *gin.Engine {
-	s := gin.Default()
+func app() *echo.Echo {
+	s := echo.New()
+	// Middleware
+	s.Use(middleware.Logger())
+	// s.Use(middleware.Recover())
 	router.Routers(s)
 	return s
 }

@@ -34,7 +34,7 @@ func (u SysRole) codeIsExist() (entity core.Entity) {
 
 func deleteRole(ID int64) error {
 	o := core.New()
-	_, err := o.Table("sys_role").Id(ID).Update(map[string]interface{}{"delete_status": 1})
+	_, err := o.Table("sys_role").Where("id = ?", ID).Update(map[string]interface{}{"delete_status": 1})
 	return err
 }
 func updateRole(ID int64, m map[string]interface{}) error {

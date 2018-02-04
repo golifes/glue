@@ -17,7 +17,7 @@ func TestLoginPost(t *testing.T) {
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	values := map[string]interface{}{
 		"UserName": "12345",
-		"Password": core.Md5(Sha1("12345") + core.Sha1("Password")),
+		"Password": core.Md5(core.Sha1("12345") + core.Sha1("Password")),
 	}
 	jsonValue, _ := json.Marshal(values)
 	RequestURL := "/v1/login"

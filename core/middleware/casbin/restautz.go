@@ -8,7 +8,7 @@ import (
 
 	"github.com/casbin/casbin"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo"
 )
 
 //Config casbin需要的配置
@@ -44,46 +44,50 @@ type Authorizer struct {
 }
 
 //RestAuth rest权限校验
-func RestAuth(c Config) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		defer func() {
-			// recover from panic if one occured. Set err to nil otherwise.
-			if r := recover(); r != nil {
-				ctx.JSON(http.StatusForbidden, r)
-				return
+func RestAuth(c Config) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(ctx echo.Context) error {
+			req := ctx.Request()
+			defer func() {
+				// recover from panic if one occured. Set err to nil otherwise.
+				if r := recover(); r != nil {
+					ctx.JSON(http.StatusForbidden, r)
+					return
+				}
+			}()
+
+			var e = casbin.NewEnforcer(casbin.NewModel(modal))
+			a := &Authorizer{enforcer: e}
+			//判断是否开放接口
+			openPermiss, err := c.OpenF()
+
+			if err != nil {
+				ctx.JSON(http.StatusForbidden, "Auth Fail"+err.Error())
 			}
-		}()
+			for _, v := range openPermiss {
+				e.AddPermissionForUser(req.Header.Get("appid"), v.Action, v.Method)
+			}
+			if a.checkPermission(req.Header.Get("appid"), req.Method, req.URL.Path) {
 
-		var e = casbin.NewEnforcer(casbin.NewModel(modal))
-		a := &Authorizer{enforcer: e}
-		//判断是否开放接口
-		openPermiss, err := c.OpenF()
+				return next(ctx)
+			}
 
-		if err != nil {
-			ctx.JSON(http.StatusForbidden, "Auth Fail"+err.Error())
-		}
-		for _, v := range openPermiss {
-			e.AddPermissionForUser(ctx.GetHeader("appid"), v.Action, v.Method)
-		}
-		if a.checkPermission(ctx.GetHeader("appid"), ctx.Request.Method, ctx.Request.URL.Path) {
-			ctx.Next()
-			return
-		}
+			if req.Header.Get("Authorization") == "" {
+				ctx.JSON(http.StatusForbidden, "miss Authorization header")
 
-		if ctx.GetHeader("Authorization") == "" {
-			ctx.JSON(http.StatusForbidden, "miss Authorization header")
-			return
-		}
-		//权限校验
-		permissions, userID, err1 := c.F(ctx.GetHeader("Authorization"), ctx.GetHeader("appid"))
-		if err1 != nil {
-			ctx.JSON(http.StatusForbidden, "Auth Fail"+err.Error())
-		}
-		for _, v := range permissions {
-			e.AddPermissionForUser(userID, v.Action, v.Method)
-		}
-		if !a.checkPermission(userID, ctx.Request.Method, ctx.Request.URL.Path) {
-			ctx.JSON(http.StatusForbidden, "Auth Fail")
+			}
+			//权限校验
+			permissions, userID, err1 := c.F(req.Header.Get("Authorization"), req.Header.Get("appid"))
+			if err1 != nil {
+				ctx.JSON(http.StatusForbidden, "Auth Fail"+err.Error())
+			}
+			for _, v := range permissions {
+				e.AddPermissionForUser(userID, v.Action, v.Method)
+			}
+			if !a.checkPermission(userID, req.Method, req.URL.Path) {
+				ctx.JSON(http.StatusForbidden, "Auth Fail")
+			}
+			return next(ctx)
 		}
 	}
 

@@ -36,7 +36,7 @@ func Connect(config Config) (err error) {
 			config.DbCharset,
 			url.QueryEscape("Asia/Shanghai")))
 	}
-	engine.ShowSQL()
+	// engine.ShowSQL()
 	return err
 }
 
