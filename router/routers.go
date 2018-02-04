@@ -18,21 +18,25 @@ func Routers(s *gin.Engine) {
 		v1.POST("/login", new(auth.LoginController).Post())
 		user := v1.Group("/user")
 		{
-			userCtl := new(auth.SysUserController)
-			user.GET("", userCtl.UserByPage())
-			user.GET("/:account", userCtl.Get())
-			user.POST("", userCtl.Post())
-			user.PUT("/:id", userCtl.Put())
-			user.DELETE("/:id", userCtl.Delete())
-		}
-		role := v1.Group("/user")
-		{
 			ctl := new(auth.SysUserController)
+			user.GET("", ctl.UserByPage())
+			user.GET(":account", ctl.Get())
+			user.POST("", ctl.Post())
+			user.PUT(":id", ctl.Put())
+			user.DELETE(":id", ctl.Delete())
+			user.GET(":id/role", ctl.GetRoleByUserID())
+			user.POST(":id/role", ctl.UserAllotRole())
+		}
+		role := v1.Group("/role")
+		{
+			ctl := new(auth.SysRoleController)
 			role.GET("", ctl.RoleByPage())
 			role.GET("/:code", ctl.Get())
 			role.POST("", ctl.Post())
 			role.PUT("/:id", ctl.Put())
 			role.DELETE("/:id", ctl.Delete())
+			// role.GET("/:id/resource", ctl.GetResourceByRoleID())
+			role.POST("/:id/resource", ctl.RoleAllotResource())
 		}
 		v1.GET("/menus/:userId", new(auth.SysResourceController).MenusByUserID())
 	}
