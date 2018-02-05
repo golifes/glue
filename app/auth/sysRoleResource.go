@@ -18,6 +18,7 @@ type SysRoleResource struct {
 	Locked       int8      `xorm:"tinyint default(0) notnull"`
 }
 
+//FindRoleResource 查询结构
 type FindRoleResource struct {
 	Code       string
 	ResourceID int64 `xorm:" 'resource_id'"`

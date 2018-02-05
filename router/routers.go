@@ -45,6 +45,7 @@ func Routers(s *echo.Echo) {
 	client.GET("/default", clientCtl.Get())
 	client.PUT("/:id", clientCtl.Put())
 	client.DELETE("/:id", clientCtl.Delete())
+	client.POST("", clientCtl.Post())
 	s.GET("/a", func(c echo.Context) error {
 		return c.String(200, "Hello, World!")
 	})

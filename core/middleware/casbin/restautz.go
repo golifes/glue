@@ -53,6 +53,7 @@ func RestAuth(c Config) echo.MiddlewareFunc {
 				if r := recover(); r != nil {
 					ctx.JSON(http.StatusForbidden, r)
 					return
+
 				}
 			}()
 
@@ -62,7 +63,7 @@ func RestAuth(c Config) echo.MiddlewareFunc {
 			openPermiss, err := c.OpenF()
 
 			if err != nil {
-				ctx.JSON(http.StatusForbidden, "Auth Fail"+err.Error())
+				return ctx.JSON(http.StatusForbidden, "Auth Fail"+err.Error())
 			}
 			for _, v := range openPermiss {
 				e.AddPermissionForUser(req.Header.Get("appid"), v.Action, v.Method)
@@ -73,19 +74,19 @@ func RestAuth(c Config) echo.MiddlewareFunc {
 			}
 
 			if req.Header.Get("Authorization") == "" {
-				ctx.JSON(http.StatusForbidden, "miss Authorization header")
+				return ctx.JSON(http.StatusForbidden, "miss Authorization header")
 
 			}
 			//权限校验
 			permissions, userID, err1 := c.F(req.Header.Get("Authorization"), req.Header.Get("appid"))
 			if err1 != nil {
-				ctx.JSON(http.StatusForbidden, "Auth Fail"+err.Error())
+				return ctx.JSON(http.StatusForbidden, "Auth Fail"+err.Error())
 			}
 			for _, v := range permissions {
 				e.AddPermissionForUser(userID, v.Action, v.Method)
 			}
 			if !a.checkPermission(userID, req.Method, req.URL.Path) {
-				ctx.JSON(http.StatusForbidden, "Auth Fail")
+				return ctx.JSON(http.StatusForbidden, "Auth Fail")
 			}
 			return next(ctx)
 		}

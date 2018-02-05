@@ -12,6 +12,7 @@ import (
 type SysClientController struct {
 }
 
+//ClientByPage 分页获取
 func (c *SysClientController) ClientByPage() func(echo.Context) error {
 	return func(c echo.Context) error {
 		pageSize := c.QueryParam("perPage")
@@ -29,14 +30,14 @@ func (c *SysClientController) ClientByPage() func(echo.Context) error {
 //Put 修改数据
 func (c *SysClientController) Put() func(echo.Context) error {
 	return func(c echo.Context) error {
-		var json map[string]interface{}
+		var json SysClient
 		ID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-		if err := c.Bind(&json); err == nil {
-			response := updateClientService(ID, json)
+		err := c.Bind(&json)
+		if err == nil {
+			response := updateClientService(ID, &json)
 			return c.JSON(response.StatusCode, response.Data)
-		} else {
-			return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
 		}
+		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
 	}
 }
 
@@ -54,5 +55,19 @@ func (c *SysClientController) Get() func(echo.Context) error {
 	return func(c echo.Context) error {
 		response := findClientByClientIDService(c.Request().Header.Get("appid"))
 		return c.JSON(response.StatusCode, response.Data)
+	}
+}
+
+//Post
+func (c *SysClientController) Post() func(echo.Context) error {
+	return func(c echo.Context) error {
+		var json SysClient
+		err := c.Bind(&json)
+		if err == nil {
+			response := createClient(json)
+			return c.JSON(response.StatusCode, response.Data)
+		}
+		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常:"+err.Error()))
+
 	}
 }

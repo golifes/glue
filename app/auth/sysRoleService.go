@@ -43,6 +43,9 @@ func findRoleByPageService(p *core.Paginator) (responseEntity core.ResponseEntit
 }
 
 func createRole(u SysRole) (responseEntity core.ResponseEntity) {
+	if u.Code == "" {
+		return *responseEntity.BuildError(core.BuildEntity(ParameterError, getMsg(ParameterError)))
+	}
 	isExist := u.codeIsExist()
 	if isExist.Code != 100000 {
 		return *responseEntity.BuildError(core.BuildEntity(RoleIsExist, getMsg(RoleIsExist)))
@@ -50,7 +53,6 @@ func createRole(u SysRole) (responseEntity core.ResponseEntity) {
 	G, _ := core.NewGUID(1)
 	id, _ := G.NextID()
 	u.ID = id
-
 	err := u.insert()
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(CreateRoleError, getMsg(CreateRoleError)))
@@ -76,16 +78,14 @@ func deleteRoleService(id int64) (responseEntity core.ResponseEntity) {
 	return *responseEntity.BuildDelete(core.BuildEntity(Success, getMsg(Success)))
 }
 
-func updateRoleService(id int64, m map[string]interface{}) (responseEntity core.ResponseEntity) {
+func updateRoleService(id int64, m SysRole) (responseEntity core.ResponseEntity) {
 
-	if _, ok := m["Code"]; ok {
-		delete(m, "Code")
-	}
-	err := updateRole(id, m)
+	m.ID = id
+	err := m.update()
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(UpdateRoleError, getMsg(UpdateRoleError)))
 	}
-	u, _ := findRoleById(id)
+	u, _ := findRoleByID(id)
 	var hateoas core.Hateoas
 	var links core.Links
 	links.Add(core.LinkTo("/v1/role/"+u.Code, "self", "GET", "根据编码获取角色信息"))

@@ -9,8 +9,10 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -120,4 +122,15 @@ func ToInt64(value interface{}) (d int64, err error) {
 		err = fmt.Errorf("ToInt64 need numeric not `%T`", value)
 	}
 	return
+}
+
+//GetRawBody 获取body
+func GetRawBody(r *http.Request) ([]byte, error) {
+	body := r.Body
+	defer body.Close()
+	rawBody, err := ioutil.ReadAll(body)
+	if err != nil {
+		return nil, err
+	}
+	return rawBody, nil
 }

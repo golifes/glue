@@ -8,7 +8,7 @@ import (
 
 //SysUser 用户
 type SysUser struct {
-	ID           int64     `xorm:"pk bigint 'id'"`
+	ID           int64     `xorm:"pk bigint 'id'" json:"Id"`
 	Account      string    `xorm:"unique varchar(100) notnull"`
 	Name         string    `xorm:"varchar(200) notnull"`
 	UserType     int8      `xorm:"tinyint default(0) notnull"` //0是第三方用户1是self
@@ -22,7 +22,7 @@ type SysUser struct {
 
 //QuerySysUser 列表查询结果结构
 type QuerySysUser struct {
-	ID           int64 `xorm:"'id'"`
+	ID           int64 `xorm:"'id'" json:"Id"`
 	Account      string
 	Name         string
 	UserType     int8
@@ -47,6 +47,12 @@ func (u SysUser) insert() error {
 	_, err := o.Insert(u)
 	return err
 }
+
+func (u SysUser) update() error {
+	o := core.New()
+	_, err := o.Where("id = ?", u.ID).Update(u)
+	return err
+}
 func (u SysUser) accountIsExist() (entity core.Entity) {
 	o := core.New()
 	has, err := o.Table(&u).Where("account = ?", u.Account).Exist()
@@ -61,12 +67,6 @@ func deleteUser(ID int64) error {
 	_, err := o.Table("sys_user").Where("id = ?", ID).Update(map[string]interface{}{"delete_status": 1})
 	return err
 }
-func updateUser(ID int64, m map[string]interface{}) error {
-	o := core.New()
-	_, err := o.Table("sys_user").Where("id = ?", ID).Update(m)
-	return err
-}
-
 func findUserAllColums(account string) (user SysUser, err error) {
 	o := core.New()
 	_, err = o.Table(&user).Where("account = ?", account).Get(&user)

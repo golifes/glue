@@ -51,14 +51,12 @@ func deleteUserService(id int64) (responseEntity core.ResponseEntity) {
 	return *responseEntity.BuildDelete(core.BuildEntity(Success, getMsg(Success)))
 }
 
-func updateUserService(id int64, m map[string]interface{}) (responseEntity core.ResponseEntity) {
+func updateUserService(id int64, m *SysUser) (responseEntity core.ResponseEntity) {
 
-	if _, ok := m["Account"]; ok {
-		delete(m, "Account")
-	}
-	err := updateUser(id, m)
+	m.ID = id
+	err := m.update()
 	if err != nil {
-		return *responseEntity.BuildError(core.BuildEntity(UpdateUserError, getMsg(UpdateUserError)))
+		return *responseEntity.BuildError(core.BuildEntity(UpdateUserError, getMsg(UpdateUserError)+err.Error()))
 	}
 	u, _ := findUserById(id)
 	var hateoas core.Hateoas

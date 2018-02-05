@@ -42,10 +42,14 @@ func roleAllotResource(roleId int64, resourceIds []int64) (responseEntity core.R
 	return *responseEntity.Build(d)
 }
 
-func findResourceByRoleIdService(roleId int64) (responseEntity core.ResponseEntity) {
-	u, err := findResourceByRoleId(roleId)
+func findResourceByRoleIDService(roleID int64) (responseEntity core.ResponseEntity) {
+	u, err := findResourceByRoleId(roleID)
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(QueryError, getMsg(QueryError)))
 	}
-	return *responseEntity.Build(u)
+	type data struct {
+		Resources interface{}
+	}
+	d := &data{u}
+	return *responseEntity.Build(d)
 }

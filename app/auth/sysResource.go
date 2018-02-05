@@ -9,7 +9,7 @@ import (
 
 //SysResource 资源
 type SysResource struct {
-	ID           int64     `xorm:"pk bigint 'id'"`
+	ID           int64     `xorm:"pk bigint 'id'" json:"Id"`
 	Code         string    `xorm:"varchar(100) unique notnull"`
 	Name         string    `xorm:"varchar(100) notnull"`
 	Action       string    `xorm:"varchar(100) notnull"`

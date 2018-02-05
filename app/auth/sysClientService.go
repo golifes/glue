@@ -10,6 +10,7 @@ import (
 func GetClientService(clientID string) (SysClient, error) {
 	return getClient(clientID)
 }
+
 func findClientByClientIDService(clientID string) (responseEntity core.ResponseEntity) {
 	u, err := getClient(clientID)
 	if err != nil {
@@ -64,22 +65,15 @@ func findClientByPageService(p *core.Paginator) (responseEntity core.ResponseEnt
 	return *responseEntity.Build(d)
 }
 
-func updateClientService(id int64, m map[string]interface{}) (responseEntity core.ResponseEntity) {
-
-	if _, ok := m["ClientID"]; ok {
-		delete(m, "ClientID")
-	}
-	if _, ok := m["Secret"]; ok {
-		delete(m, "Secret")
-	}
-	if _, ok := m["VerifySecret"]; ok {
-		delete(m, "VerifySecret")
-	}
-	err := updateClient(id, m)
+func updateClientService(id int64, m *SysClient) (responseEntity core.ResponseEntity) {
+	m.ID = id
+	m.Secret = ""
+	m.VerifySecret = ""
+	err := m.update()
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(UpdateClientError, getMsg(UpdateClientError)))
 	}
-	u, _ := finClientById(id)
+	u, _ := finClientByID(id)
 	var hateoas core.Hateoas
 	var links core.Links
 	links.Add(core.LinkTo("/v1/client/"+u.ClientID, "self", "GET", "根据编码获取客户端信息"))
@@ -99,4 +93,27 @@ func deleteClientService(id int64, lock int8) (responseEntity core.ResponseEntit
 		return *responseEntity.BuildError(core.BuildEntity(DeleteClientError, getMsg(DeleteClientError)))
 	}
 	return *responseEntity.BuildDelete(core.BuildEntity(Success, getMsg(Success)))
+}
+func createClient(u SysClient) (responseEntity core.ResponseEntity) {
+	G, _ := core.NewGUID(1)
+	id, _ := G.NextID()
+	u.ID = id
+	u.ClientID = strconv.FormatInt(id, 10)
+	u.Secret = core.RandStringByLen(10)
+	u.VerifySecret = core.RandStringByLen(10)
+
+	err := u.insert()
+	if err != nil {
+		return *responseEntity.BuildError(core.BuildEntity(CreateUserError, getMsg(CreateUserError)))
+	}
+	var hateoas core.Hateoas
+	var links core.Links
+	links.Add(core.LinkTo("/v1/client", "self", "GET", "根据用户账号分页获取客户端信息"))
+	links.Add(core.LinkTo("/v1/client/"+strconv.FormatInt(id, 10), "self", "PUT", "根据id修改客户端信息"))
+	hateoas.AddLinks(links)
+	type data struct {
+		*core.Hateoas
+	}
+	d := &data{&hateoas}
+	return *responseEntity.BuildPostAndPut(d)
 }

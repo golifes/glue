@@ -34,23 +34,22 @@ func (c *SysRoleController) Post() func(echo.Context) error {
 		if err := c.Bind(&json); err == nil {
 			response := createRole(json)
 			return c.JSON(response.StatusCode, response.Data)
-		} else {
-			return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
 		}
+		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
+
 	}
 }
 
 //Put 修改数据
 func (c *SysRoleController) Put() func(echo.Context) error {
 	return func(c echo.Context) error {
-		var json map[string]interface{}
 		ID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		var json SysRole
 		if err := c.Bind(&json); err == nil {
 			response := updateRoleService(ID, json)
 			return c.JSON(response.StatusCode, response.Data)
-		} else {
-			return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
 		}
+		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
 	}
 }
 
@@ -71,17 +70,17 @@ func (c *SysRoleController) Get() func(echo.Context) error {
 	}
 }
 
-//GetResourceByRoleID
+//GetResourceByRoleID 根据角色获取资源
 func (c *SysRoleController) GetResourceByRoleID() func(echo.Context) error {
 	return func(c echo.Context) error {
 
 		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-		response := findResourceByRoleIdService(id)
+		response := findResourceByRoleIDService(id)
 		return c.JSON(response.StatusCode, response.Data)
 	}
 }
 
-//RoleAllotResource
+//RoleAllotResource  角色分配资源
 func (c *SysRoleController) RoleAllotResource() func(echo.Context) error {
 	return func(c echo.Context) error {
 		type json struct {

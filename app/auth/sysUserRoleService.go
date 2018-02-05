@@ -10,18 +10,19 @@ func findRoleIDByUser(userID int64) ([]int64, error) {
 	return findRoleIDByUserID(userID)
 }
 
-func userAllotRole(userId int64, roleIds []int64) (responseEntity core.ResponseEntity) {
+func userAllotRole(userID int64, roleIds []string) (responseEntity core.ResponseEntity) {
 	sysUserRole := new([]SysUserRole)
 	G, _ := core.NewGUID(2)
 	for _, value := range roleIds {
 		m := new(SysUserRole)
 		id, _ := G.NextID()
 		m.ID = id
-		m.UserID = userId
-		m.RoleID = value
+		m.UserID = userID
+		roleID, _ := strconv.ParseInt(value, 10, 64)
+		m.RoleID = roleID
 		*sysUserRole = append(*sysUserRole, *m)
 	}
-	err := deleteUserRole(userId)
+	err := deleteUserRole(userID)
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(ParameterError, getMsg(ParameterError)))
 	}
@@ -31,7 +32,7 @@ func userAllotRole(userId int64, roleIds []int64) (responseEntity core.ResponseE
 	}
 	var hateoas core.Hateoas
 	var links core.Links
-	links.Add(core.LinkTo("/v1/user/"+strconv.FormatInt(userId, 10)+"/role", "self", "GET", "根据用户id获取角色"))
+	links.Add(core.LinkTo("/v1/user/"+strconv.FormatInt(userID, 10)+"/role", "self", "GET", "根据用户id获取角色"))
 	hateoas.AddLinks(links)
 	type data struct {
 		*core.Hateoas
@@ -45,5 +46,9 @@ func findRoleByUserIDService(userID int64) (responseEntity core.ResponseEntity) 
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(QueryError, getMsg(QueryError)))
 	}
-	return *responseEntity.Build(u)
+	type data struct {
+		Roles interface{}
+	}
+	d := &data{u}
+	return *responseEntity.Build(d)
 }

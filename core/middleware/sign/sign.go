@@ -25,26 +25,26 @@ func New(conf Config) echo.MiddlewareFunc {
 		return func(ctx echo.Context) error {
 			req := ctx.Request()
 			if req.Header.Get("appid") == "" {
-				ctx.JSON(http.StatusForbidden, "miss appid header")
+				return ctx.JSON(http.StatusForbidden, "miss appid header")
 			}
 			appsecret := conf.F(req.Header.Get("appid"))
 			if appsecret == "" {
-				ctx.JSON(http.StatusForbidden, "not exist this appid")
+				return ctx.JSON(http.StatusForbidden, "not exist this appid")
 			}
 			clientSignature := req.Header.Get("signature")
 			if clientSignature == "" {
-				ctx.JSON(http.StatusForbidden, "miss signature header")
+				return ctx.JSON(http.StatusForbidden, "miss signature header")
 			}
 			if req.Header.Get("timestamp") == "" {
-				ctx.JSON(http.StatusForbidden, "miss timestamp header")
+				return ctx.JSON(http.StatusForbidden, "miss timestamp header")
 			}
 			u, err := time.Parse("2006-01-02 15:04:05", req.Header.Get("timestamp"))
 			if err != nil {
-				ctx.JSON(http.StatusForbidden, "timestamp format is error, should 2006-01-02 15:04:05")
+				return ctx.JSON(http.StatusForbidden, "timestamp format is error, should 2006-01-02 15:04:05")
 			}
 			t := time.Now()
 			if t.Sub(u).Seconds() > float64(conf.Timeout) {
-				ctx.JSON(http.StatusForbidden, "timeout! the request time is long ago, please try again")
+				return ctx.JSON(http.StatusForbidden, "timeout! the request time is long ago, please try again")
 			}
 			var requestURL string
 			var body []byte
@@ -60,7 +60,7 @@ func New(conf Config) echo.MiddlewareFunc {
 			// fmt.Println("serviceSignature:", serviceSignature)
 			// fmt.Println("clientSignature:", clientSignature)
 			if clientSignature != serviceSignature {
-				ctx.JSON(http.StatusForbidden, "Signature Failed")
+				return ctx.JSON(http.StatusForbidden, "Signature Failed")
 			}
 			return next(ctx)
 		}

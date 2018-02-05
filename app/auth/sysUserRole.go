@@ -23,8 +23,8 @@ func findRoleIDByUserID(userID int64) ([]int64, error) {
 	err := o.Table("sys_user_role").Cols("role_id").Where("user_id = ?", userID).Find(&roleIds)
 	return roleIds, err
 }
-func findRoleByUserID(userID int64) ([]SysRole, error) {
-	var m []SysRole
+func findRoleByUserID(userID int64) ([]QuerySysRole, error) {
+	var m []QuerySysRole
 	o := core.New()
 	err := o.Table("sys_user_role").Alias("ur").Join("INNER", []string{"sys_role", "r"}, "r.id=ur.role_id").
 		Where("ur.user_id=?", userID).
