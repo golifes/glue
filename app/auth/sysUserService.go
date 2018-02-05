@@ -23,7 +23,7 @@ func createUser(u SysUser) (responseEntity core.ResponseEntity) {
 	}
 	G, _ := core.NewGUID(1)
 	id, _ := G.NextID()
-	u.ID = id
+	u.ID = strconv.FormatInt(id, 10)
 	u.Salt = core.RandStringByLen(10)
 
 	err := u.insert()
@@ -51,19 +51,20 @@ func deleteUserService(id int64) (responseEntity core.ResponseEntity) {
 	return *responseEntity.BuildDelete(core.BuildEntity(Success, getMsg(Success)))
 }
 
-func updateUserService(id int64, m *SysUser) (responseEntity core.ResponseEntity) {
+func updateUserService(id string, m *SysUser) (responseEntity core.ResponseEntity) {
 
 	m.ID = id
+	m.Account = ""
 	err := m.update()
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(UpdateUserError, getMsg(UpdateUserError)+err.Error()))
 	}
-	u, _ := findUserById(id)
+	u, _ := findUserByID(id)
 	var hateoas core.Hateoas
 	var links core.Links
 	links.Add(core.LinkTo("/v1/user/"+u.Account, "self", "GET", "根据用户账号获取用户信息"))
-	links.Add(core.LinkTo("/v1/user/"+strconv.FormatInt(id, 10), "self", "DELETE", "根据id删除用户信息"))
-	links.Add(core.LinkTo("/v1/user/"+strconv.FormatInt(id, 10), "self", "PUT", "根据id修改用户信息"))
+	links.Add(core.LinkTo("/v1/user/"+id, "self", "DELETE", "根据id删除用户信息"))
+	links.Add(core.LinkTo("/v1/user/"+id, "self", "PUT", "根据id修改用户信息"))
 	hateoas.AddLinks(links)
 	type data struct {
 		*core.Hateoas

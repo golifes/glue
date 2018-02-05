@@ -18,8 +18,7 @@ func (c *LoginController) Post() func(echo.Context) error {
 		if err := c.Bind(login); err == nil {
 			response := loginService(login, c.Request().Header.Get("appid"))
 			return c.JSON(response.StatusCode, response.Data)
-		} else {
-			return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
 		}
+		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
 	}
 }

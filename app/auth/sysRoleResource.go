@@ -9,9 +9,9 @@ import (
 
 //SysRoleResource 角色资源
 type SysRoleResource struct {
-	ID           int64     `xorm:"pk bigint 'id'"`
-	RoleID       int64     `xorm:" bigint  notnull 'role_id'"`
-	ResourceID   int64     `xorm:" bigint notnull 'resource_id'"`
+	ID           string    `xorm:"pk varchar(20) 'id'"`
+	RoleID       string    `xorm:" varchar(20)  notnull 'role_id'"`
+	ResourceID   string    `xorm:" varchar(20) notnull 'resource_id'"`
 	DeleteStatus int8      `xorm:"tinyint default(0) notnull"`
 	Created      time.Time `xorm:"timestamp created notnull"`
 	Updated      time.Time `xorm:"timestamp updated  notnull"`
@@ -37,7 +37,7 @@ func permissionByMultiRole(roleIds interface{}, resType int8) (resource []casbin
 	return resource, err
 }
 
-func findResourceByMultiRole(roleIds []int64, resType int8) (resource []FindRoleResource, err error) {
+func findResourceByMultiRole(roleIds []string, resType int8) (resource []FindRoleResource, err error) {
 	o := core.New()
 	err = o.Table("sys_role_resource").Alias("rr").Join("INNER", []string{"sys_resource", "r"}, "r.id=rr.resource_id").
 		In("rr.role_id", roleIds).
@@ -47,10 +47,10 @@ func findResourceByMultiRole(roleIds []int64, resType int8) (resource []FindRole
 	return resource, err
 }
 
-func findResourceByRoleId(roleId int64) (resource []SysResource, err error) {
+func findResourceByRoleID(roleID string) (resource []SysResource, err error) {
 	o := core.New()
 	err = o.Table("sys_role_resource").Alias("rr").Join("INNER", []string{"sys_resource", "r"}, "r.id=rr.resource_id").
-		Where("rr.role_id=?", roleId).
+		Where("rr.role_id=?", roleID).
 		Cols("r.*").
 		Find(&resource)
 	return resource, err
@@ -62,8 +62,8 @@ func insertRoleResource(m []SysRoleResource) error {
 	return err
 }
 
-func deleteRoleResource(roleId int64) error {
+func deleteRoleResource(roleID string) error {
 	o := core.New()
-	_, err := o.Where("role_id = ?", roleId).Delete(new(SysRoleResource))
+	_, err := o.Where("role_id = ?", roleID).Delete(new(SysRoleResource))
 	return err
 }

@@ -15,16 +15,13 @@ type SysResourceController struct {
 //MenusByUserID 获取用户默认菜单
 func (c *SysResourceController) MenusByUserID() func(echo.Context) error {
 	return func(c echo.Context) error {
-		userID := c.Param("userId")
-		i64, err := strconv.ParseInt(userID, 10, 64)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
-		}
-		response := menuByUserIDService(i64)
+
+		response := menuByUserIDService(c.Param("userId"))
 		return c.JSON(response.StatusCode, response.Data)
 	}
 }
 
+//ResourceByPage 资源角色
 func (c *SysResourceController) ResourceByPage() func(echo.Context) error {
 	return func(c echo.Context) error {
 		pageSize := c.QueryParam("perPage")
@@ -38,6 +35,8 @@ func (c *SysResourceController) ResourceByPage() func(echo.Context) error {
 		return c.JSON(response.StatusCode, response.Data)
 	}
 }
+
+//ResourceByCode 根据code获取资源
 func (c *SysResourceController) ResourceByCode() func(echo.Context) error {
 	return func(c echo.Context) error {
 		response := findResourceByCodeService(c.Param("code"))

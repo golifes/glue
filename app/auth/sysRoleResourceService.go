@@ -12,13 +12,13 @@ func PermissionByMultiRole(roleIds interface{}, resType int8) ([]casbin.Permissi
 	return permissionByMultiRole(roleIds, resType)
 }
 
-func roleAllotResource(roleId int64, resourceIds []int64) (responseEntity core.ResponseEntity) {
+func roleAllotResource(roleId string, resourceIds []string) (responseEntity core.ResponseEntity) {
 	roleResources := new([]SysRoleResource)
 	G, _ := core.NewGUID(2)
 	for _, value := range resourceIds {
 		m := new(SysRoleResource)
 		id, _ := G.NextID()
-		m.ID = id
+		m.ID = strconv.FormatInt(id, 10)
 		m.ResourceID = value
 		m.RoleID = roleId
 		*roleResources = append(*roleResources, *m)
@@ -33,7 +33,7 @@ func roleAllotResource(roleId int64, resourceIds []int64) (responseEntity core.R
 	}
 	var hateoas core.Hateoas
 	var links core.Links
-	links.Add(core.LinkTo("/v1/role/"+strconv.FormatInt(roleId, 10)+"/resource", "self", "GET", "根据用户id获取角色"))
+	links.Add(core.LinkTo("/v1/role/"+roleId+"/resource", "self", "GET", "根据用户id获取角色"))
 	hateoas.AddLinks(links)
 	type data struct {
 		*core.Hateoas
@@ -42,8 +42,8 @@ func roleAllotResource(roleId int64, resourceIds []int64) (responseEntity core.R
 	return *responseEntity.Build(d)
 }
 
-func findResourceByRoleIDService(roleID int64) (responseEntity core.ResponseEntity) {
-	u, err := findResourceByRoleId(roleID)
+func findResourceByRoleIDService(roleID string) (responseEntity core.ResponseEntity) {
+	u, err := findResourceByRoleID(roleID)
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(QueryError, getMsg(QueryError)))
 	}

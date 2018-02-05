@@ -8,7 +8,7 @@ import (
 
 //SysUser 用户
 type SysUser struct {
-	ID           int64     `xorm:"pk bigint 'id'" json:"Id"`
+	ID           string    `xorm:"pk varchar(20) 'id'" json:"Id"`
 	Account      string    `xorm:"unique varchar(100) notnull"`
 	Name         string    `xorm:"varchar(200) notnull"`
 	UserType     int8      `xorm:"tinyint default(0) notnull"` //0是第三方用户1是self
@@ -78,9 +78,9 @@ func findUserByAccount(account string) (user QuerySysUser, err error) {
 	return user, err
 }
 
-func findUserById(id int64) (user SysUser, err error) {
+func findUserByID(id string) (user SysUser, err error) {
 	o := core.New()
-	_, err = o.Table(&user).Id(id).Get(&user)
+	_, err = o.Table(&user).Where("id = ?", id).Get(&user)
 	return user, err
 }
 func userCountByPage() (num int64, err error) {

@@ -44,11 +44,10 @@ func (c *SysUserController) Post() func(echo.Context) error {
 //Put 修改数据
 func (c *SysUserController) Put() func(echo.Context) error {
 	return func(c echo.Context) error {
-		ID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 		var json SysUser
 		err := c.Bind(&json)
 		if err == nil {
-			response := updateUserService(ID, &json)
+			response := updateUserService(c.Param("id"), &json)
 			return c.JSON(response.StatusCode, response.Data)
 		}
 		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常:"+err.Error()))
@@ -76,8 +75,7 @@ func (c *SysUserController) Get() func(echo.Context) error {
 //GetRoleByUserID 根据用户获取角色
 func (c *SysUserController) GetRoleByUserID() func(echo.Context) error {
 	return func(c echo.Context) error {
-		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-		response := findRoleByUserIDService(id)
+		response := findRoleByUserIDService(c.Param("id"))
 		return c.JSON(response.StatusCode, response.Data)
 	}
 }
@@ -89,10 +87,9 @@ func (c *SysUserController) UserAllotRole() func(echo.Context) error {
 			RoleId []string
 		}
 		var d json
-		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
-		err = c.Bind(&d)
+		err := c.Bind(&d)
 		if err == nil {
-			response := userAllotRole(id, d.RoleId)
+			response := userAllotRole(c.Param("id"), d.RoleId)
 			return c.JSON(response.StatusCode, response.Data)
 		}
 		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))

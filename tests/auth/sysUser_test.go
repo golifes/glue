@@ -42,7 +42,7 @@ func TestUserPut(t *testing.T) {
 		"Name":    "测试2",
 	}
 	jsonValue, _ := json.Marshal(values)
-	RequestURL := "/v1/user/" + strconv.FormatInt(user.ID, 10)
+	RequestURL := "/v1/user/" + user.ID
 	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
@@ -76,7 +76,7 @@ func TestUserDelete(t *testing.T) {
 	o.Table("sys_user").Where("account = ?", "1234567").Get(&user)
 	method := "DELETE"
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	RequestURL := "/v1/user/" + strconv.FormatInt(user.ID, 10)
+	RequestURL := "/v1/user/" + user.ID
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
@@ -85,15 +85,15 @@ func TestUserDelete(t *testing.T) {
 
 func TestUserAllotRole(t *testing.T) {
 	user := new(auth.SysUser)
-	user.ID = 10
+	user.ID = "10"
 	salt := core.RandStringByLen(6)
 	user.Account = "10"
 	user.Name = "测试员工10"
 	user.Password = core.Md5(core.Md5(core.Sha1("12345")+core.Sha1("Password")) + salt)
 	user.Salt = salt
 	role := []auth.SysRole{
-		{ID: 10, Code: "10", Name: "测试管理员10"},
-		{ID: 11, Code: "11", Name: "测试管理员11"},
+		{ID: "10", Code: "10", Name: "测试管理员10"},
+		{ID: "11", Code: "11", Name: "测试管理员11"},
 	}
 	o := core.New()
 	o.Insert(user)
@@ -101,7 +101,7 @@ func TestUserAllotRole(t *testing.T) {
 	method := "POST"
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	values := map[string]interface{}{
-		"roleId": []int64{int64(10), int64(11)},
+		"roleId": []string{"10", "11"},
 	}
 	jsonValue, _ := json.Marshal(values)
 	RequestURL := "/v1/user/" + strconv.FormatInt(10, 10) + "/role"

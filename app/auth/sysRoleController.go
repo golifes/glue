@@ -43,10 +43,9 @@ func (c *SysRoleController) Post() func(echo.Context) error {
 //Put 修改数据
 func (c *SysRoleController) Put() func(echo.Context) error {
 	return func(c echo.Context) error {
-		ID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 		var json SysRole
 		if err := c.Bind(&json); err == nil {
-			response := updateRoleService(ID, json)
+			response := updateRoleService(c.Param("id"), json)
 			return c.JSON(response.StatusCode, response.Data)
 		}
 		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
@@ -56,8 +55,7 @@ func (c *SysRoleController) Put() func(echo.Context) error {
 //Delete 删除数据
 func (c *SysRoleController) Delete() func(echo.Context) error {
 	return func(c echo.Context) error {
-		ID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-		response := deleteRoleService(ID)
+		response := deleteRoleService(c.Param("id"))
 		return c.JSON(response.StatusCode, response.Data)
 	}
 }
@@ -73,9 +71,7 @@ func (c *SysRoleController) Get() func(echo.Context) error {
 //GetResourceByRoleID 根据角色获取资源
 func (c *SysRoleController) GetResourceByRoleID() func(echo.Context) error {
 	return func(c echo.Context) error {
-
-		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-		response := findResourceByRoleIDService(id)
+		response := findResourceByRoleIDService(c.Param("id"))
 		return c.JSON(response.StatusCode, response.Data)
 	}
 }
@@ -84,17 +80,16 @@ func (c *SysRoleController) GetResourceByRoleID() func(echo.Context) error {
 func (c *SysRoleController) RoleAllotResource() func(echo.Context) error {
 	return func(c echo.Context) error {
 		type json struct {
-			ResourceId []int64
+			ResourceId []string
 		}
 		var d json
-		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
-
-		if err = c.Bind(&d); err == nil {
-			response := roleAllotResource(id, d.ResourceId)
+		err := c.Bind(&d)
+		if err == nil {
+			response := roleAllotResource(c.Param("id"), d.ResourceId)
 			return c.JSON(response.StatusCode, response.Data)
-		} else {
-
-			return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
 		}
+
+		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
+
 	}
 }

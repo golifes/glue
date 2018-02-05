@@ -52,7 +52,7 @@ func createRole(u SysRole) (responseEntity core.ResponseEntity) {
 	}
 	G, _ := core.NewGUID(1)
 	id, _ := G.NextID()
-	u.ID = id
+	u.ID = strconv.FormatInt(id, 10)
 	err := u.insert()
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(CreateRoleError, getMsg(CreateRoleError)))
@@ -70,7 +70,7 @@ func createRole(u SysRole) (responseEntity core.ResponseEntity) {
 	return *responseEntity.BuildPostAndPut(d)
 }
 
-func deleteRoleService(id int64) (responseEntity core.ResponseEntity) {
+func deleteRoleService(id string) (responseEntity core.ResponseEntity) {
 	err := deleteRole(id)
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(DeleteRoleError, getMsg(DeleteRoleError)))
@@ -78,9 +78,10 @@ func deleteRoleService(id int64) (responseEntity core.ResponseEntity) {
 	return *responseEntity.BuildDelete(core.BuildEntity(Success, getMsg(Success)))
 }
 
-func updateRoleService(id int64, m SysRole) (responseEntity core.ResponseEntity) {
+func updateRoleService(id string, m SysRole) (responseEntity core.ResponseEntity) {
 
 	m.ID = id
+	m.Code = ""
 	err := m.update()
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(UpdateRoleError, getMsg(UpdateRoleError)))
@@ -89,8 +90,8 @@ func updateRoleService(id int64, m SysRole) (responseEntity core.ResponseEntity)
 	var hateoas core.Hateoas
 	var links core.Links
 	links.Add(core.LinkTo("/v1/role/"+u.Code, "self", "GET", "根据编码获取角色信息"))
-	links.Add(core.LinkTo("/v1/role/"+strconv.FormatInt(id, 10), "self", "DELETE", "根据id删除角色信息"))
-	links.Add(core.LinkTo("/v1/role/"+strconv.FormatInt(id, 10), "self", "PUT", "根据id修改角色信息"))
+	links.Add(core.LinkTo("/v1/role/"+id, "self", "DELETE", "根据id删除角色信息"))
+	links.Add(core.LinkTo("/v1/role/"+id, "self", "PUT", "根据id修改角色信息"))
 	hateoas.AddLinks(links)
 	type data struct {
 		*core.Hateoas
@@ -106,8 +107,8 @@ func findRoleByCodeService(code string) (responseEntity core.ResponseEntity) {
 	}
 	var hateoas core.Hateoas
 	var links core.Links
-	links.Add(core.LinkTo("/v1/role/"+strconv.FormatInt(u.ID, 10), "self", "DELETE", "根据id删除角色信息"))
-	links.Add(core.LinkTo("/v1/role/"+strconv.FormatInt(u.ID, 10), "self", "PUT", "根据id修改角色信息"))
+	links.Add(core.LinkTo("/v1/role/"+u.ID, "self", "DELETE", "根据id删除角色信息"))
+	links.Add(core.LinkTo("/v1/role/"+u.ID, "self", "PUT", "根据id修改角色信息"))
 	hateoas.AddLinks(links)
 	type data struct {
 		Roles SysRole

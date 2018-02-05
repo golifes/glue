@@ -4,7 +4,7 @@ import "github.com/xwinie/glue/core"
 
 //SysClient 客户端管理
 type SysClient struct {
-	ID           int64  `xorm:"pk bigint 'id'" json:"Id"`
+	ID           string `xorm:"pk varchar(20) 'id'" json:"Id"`
 	ClientID     string `xorm:"varchar(100) notnull unique 'client_id'"`
 	Name         string `xorm:"varchar(200) notnull"`
 	Secret       string `xorm:"varchar(200) notnull"`
@@ -14,7 +14,7 @@ type SysClient struct {
 
 //QuerySysClient 结构
 type QuerySysClient struct {
-	ID       int64  `xorm:"'id'" json:"Id"`
+	ID       string `xorm:"'id'" json:"Id"`
 	ClientID string `xorm:"'client_id'" json:"ClientId"`
 	Name     string
 	Locked   int8
@@ -49,7 +49,7 @@ func (u SysClient) codeIsExist() (entity core.Entity) {
 	return entity.New(Success, getMsg(Success))
 }
 
-func updateClientLock(ID int64, locked int8) error {
+func updateClientLock(ID string, locked int8) error {
 	o := core.New()
 	_, err := o.Table("sys_client").Where("id = ?", ID).Update(map[string]interface{}{"locked": locked})
 	return err
@@ -66,7 +66,7 @@ func clientByPage(pageSize int, offset int) (m []*QuerySysClient, err error) {
 	return m, err
 }
 
-func finClientByID(id int64) (u SysClient, err error) {
+func finClientByID(id string) (u SysClient, err error) {
 	o := core.New()
 	_, err = o.Table(&u).Where("id = ?", id).Get(&u)
 	return u, err

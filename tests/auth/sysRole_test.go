@@ -41,7 +41,7 @@ func TestRolePut(t *testing.T) {
 		"Name": "测试角色2",
 	}
 	jsonValue, _ := json.Marshal(values)
-	RequestURL := "/v1/role/" + strconv.FormatInt(m.ID, 10)
+	RequestURL := "/v1/role/" + m.ID
 	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
@@ -75,7 +75,7 @@ func TestRoleDelete(t *testing.T) {
 	o.Table("sys_role").Where("code = ?", "1234567").Get(&m)
 	method := "DELETE"
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	RequestURL := "/v1/role/" + strconv.FormatInt(m.ID, 10)
+	RequestURL := "/v1/role/" + m.ID
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
@@ -84,12 +84,12 @@ func TestRoleDelete(t *testing.T) {
 
 func TestRoleAllotResource(t *testing.T) {
 	role := new(auth.SysRole)
-	role.ID = 100
+	role.ID = "100"
 	role.Code = "100"
 	role.Name = "管理员100"
 	resource := []auth.SysResource{
-		{ID: 1, Code: "1", Action: "/v1/test1", Method: "POST", Name: "测试", IsOpen: 0, ResType: 0},
-		{ID: 2, Code: "2", Action: "/v1/test2", Method: "POST", Name: "测试", IsOpen: 0, ResType: 0},
+		{ID: "1", Code: "1", Action: "/v1/test1", Method: "POST", Name: "测试", IsOpen: 0, ResType: 0},
+		{ID: "2", Code: "2", Action: "/v1/test2", Method: "POST", Name: "测试", IsOpen: 0, ResType: 0},
 	}
 	o := core.New()
 	o.Insert(role)
@@ -97,7 +97,7 @@ func TestRoleAllotResource(t *testing.T) {
 	method := "POST"
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	values := map[string]interface{}{
-		"ResourceId": []int64{int64(1), int64(2)},
+		"ResourceId": []string{"1", "2"},
 	}
 	jsonValue, _ := json.Marshal(values)
 	RequestURL := "/v1/role/" + strconv.FormatInt(100, 10) + "/resource"

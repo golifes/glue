@@ -64,11 +64,11 @@ func getRestAutz(authorization, appid string) ([]casbin.Permission, string, erro
 		Exp      float64
 		Iat      int64
 		Issuer   string
-		UserId   int64
+		UserId   string
 		userType int8
 		Account  string
 		UserName string
-		Role     []int64
+		Role     []string
 	}
 	token, err := casbin.ParseToken(authorization, client.VerifySecret)
 	if err != nil {

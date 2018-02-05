@@ -18,8 +18,8 @@ func findClientByClientIDService(clientID string) (responseEntity core.ResponseE
 	}
 	var hateoas core.Hateoas
 	var links core.Links
-	links.Add(core.LinkTo("/v1/client/"+strconv.FormatInt(u.ID, 10), "self", "DELETE", "根据id锁客户端信息"))
-	links.Add(core.LinkTo("/v1/client/"+strconv.FormatInt(u.ID, 10), "self", "PUT", "根据id修改客户端信息"))
+	links.Add(core.LinkTo("/v1/client/"+u.ID, "self", "DELETE", "根据id锁客户端信息"))
+	links.Add(core.LinkTo("/v1/client/"+u.ID, "self", "PUT", "根据id修改客户端信息"))
 	hateoas.AddLinks(links)
 	type data struct {
 		Client SysClient
@@ -65,8 +65,9 @@ func findClientByPageService(p *core.Paginator) (responseEntity core.ResponseEnt
 	return *responseEntity.Build(d)
 }
 
-func updateClientService(id int64, m *SysClient) (responseEntity core.ResponseEntity) {
+func updateClientService(id string, m *SysClient) (responseEntity core.ResponseEntity) {
 	m.ID = id
+	m.ClientID = ""
 	m.Secret = ""
 	m.VerifySecret = ""
 	err := m.update()
@@ -77,8 +78,8 @@ func updateClientService(id int64, m *SysClient) (responseEntity core.ResponseEn
 	var hateoas core.Hateoas
 	var links core.Links
 	links.Add(core.LinkTo("/v1/client/"+u.ClientID, "self", "GET", "根据编码获取客户端信息"))
-	links.Add(core.LinkTo("/v1/client/"+strconv.FormatInt(id, 10), "self", "DELETE", "根据id锁客户端信息"))
-	links.Add(core.LinkTo("/v1/client/"+strconv.FormatInt(id, 10), "self", "PUT", "根据id修改客户端信息"))
+	links.Add(core.LinkTo("/v1/client/"+id, "self", "DELETE", "根据id锁客户端信息"))
+	links.Add(core.LinkTo("/v1/client/"+id, "self", "PUT", "根据id修改客户端信息"))
 	hateoas.AddLinks(links)
 	type data struct {
 		*core.Hateoas
@@ -87,7 +88,7 @@ func updateClientService(id int64, m *SysClient) (responseEntity core.ResponseEn
 	return *responseEntity.BuildPostAndPut(d)
 }
 
-func deleteClientService(id int64, lock int8) (responseEntity core.ResponseEntity) {
+func deleteClientService(id string, lock int8) (responseEntity core.ResponseEntity) {
 	err := updateClientLock(id, lock)
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(DeleteClientError, getMsg(DeleteClientError)))
@@ -97,7 +98,7 @@ func deleteClientService(id int64, lock int8) (responseEntity core.ResponseEntit
 func createClient(u SysClient) (responseEntity core.ResponseEntity) {
 	G, _ := core.NewGUID(1)
 	id, _ := G.NextID()
-	u.ID = id
+	u.ID = strconv.FormatInt(id, 10)
 	u.ClientID = strconv.FormatInt(id, 10)
 	u.Secret = core.RandStringByLen(10)
 	u.VerifySecret = core.RandStringByLen(10)

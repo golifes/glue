@@ -52,13 +52,13 @@ func loginService(loginData *loginData, appID string) (responseEntity core.Respo
 		Name    string
 		Token   string
 		Exp     int64
-		ID      int64
+		ID      string
 	}
 	d := &data{user.Account, user.Name, token, exp, user.ID}
 	return *responseEntity.BuildPostAndPut(d)
 }
 
-func getToken(appID string, key string, user SysUser, userRoleID []int64, exp int64) (string, error) {
+func getToken(appID string, key string, user SysUser, userRoleID []string, exp int64) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := make(jwt.MapClaims)
 	claims["exp"] = exp

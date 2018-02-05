@@ -11,7 +11,7 @@ func OpenPermission() ([]casbin.Permission, error) {
 }
 
 // 获取用户菜单
-func menuByUserIDService(userID int64) (responseEntity core.ResponseEntity) {
+func menuByUserIDService(userID string) (responseEntity core.ResponseEntity) {
 	roleID, err := findRoleIDByUserID(userID)
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(QueryError, getMsg(QueryError)))

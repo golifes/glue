@@ -29,7 +29,7 @@ func TestClientrByPage(t *testing.T) {
 
 func TestClientPut(t *testing.T) {
 	client := new(auth.SysClient)
-	client.ID = 10
+	client.ID = "10"
 	client.ClientID = "app10"
 	client.Name = "测试app10"
 	client.Secret = "Lx1b8JoZoE"

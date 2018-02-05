@@ -31,10 +31,9 @@ func (c *SysClientController) ClientByPage() func(echo.Context) error {
 func (c *SysClientController) Put() func(echo.Context) error {
 	return func(c echo.Context) error {
 		var json SysClient
-		ID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 		err := c.Bind(&json)
 		if err == nil {
-			response := updateClientService(ID, &json)
+			response := updateClientService(c.Param("id"), &json)
 			return c.JSON(response.StatusCode, response.Data)
 		}
 		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
@@ -44,8 +43,7 @@ func (c *SysClientController) Put() func(echo.Context) error {
 //Delete 删除数据
 func (c *SysClientController) Delete() func(echo.Context) error {
 	return func(c echo.Context) error {
-		ID, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-		response := deleteClientService(ID, 1)
+		response := deleteClientService(c.Param("id"), 1)
 		return c.JSON(response.StatusCode, response.Data)
 	}
 }
