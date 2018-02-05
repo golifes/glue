@@ -79,8 +79,8 @@ func findUserByAccountService(account string) (responseEntity core.ResponseEntit
 	}
 	var hateoas core.Hateoas
 	var links core.Links
-	links.Add(core.LinkTo("/v1/user/"+strconv.FormatInt(u.ID, 10), "self", "DELETE", "根据id删除用户信息"))
-	links.Add(core.LinkTo("/v1/user/"+strconv.FormatInt(u.ID, 10), "self", "PUT", "根据id修改用户信息"))
+	links.Add(core.LinkTo("/v1/user/"+u.ID, "self", "DELETE", "根据id删除用户信息"))
+	links.Add(core.LinkTo("/v1/user/"+u.ID, "self", "PUT", "根据id修改用户信息"))
 	hateoas.AddLinks(links)
 	type data struct {
 		QuerySysUser

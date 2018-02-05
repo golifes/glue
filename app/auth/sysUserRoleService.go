@@ -6,7 +6,7 @@ import (
 	"github.com/xwinie/glue/core"
 )
 
-func findRoleIDByUser(userID string) ([]string, error) {
+func findRoleIDByUser(userID string) ([]int64, error) {
 	return findRoleIDByUserID(userID)
 }
 
@@ -16,9 +16,11 @@ func userAllotRole(userID string, roleIds []string) (responseEntity core.Respons
 	for _, value := range roleIds {
 		m := new(SysUserRole)
 		id, _ := G.NextID()
-		m.ID = strconv.FormatInt(id, 10)
-		m.UserID = userID
-		m.RoleID = value
+		m.ID = id
+		userInt64, _ := strconv.ParseInt(userID, 10, 64)
+		m.UserID = userInt64
+		roleInt64, _ := strconv.ParseInt(value, 10, 64)
+		m.RoleID = roleInt64
 		*sysUserRole = append(*sysUserRole, *m)
 	}
 	err := deleteUserRole(userID)

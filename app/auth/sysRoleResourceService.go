@@ -18,9 +18,11 @@ func roleAllotResource(roleId string, resourceIds []string) (responseEntity core
 	for _, value := range resourceIds {
 		m := new(SysRoleResource)
 		id, _ := G.NextID()
-		m.ID = strconv.FormatInt(id, 10)
-		m.ResourceID = value
-		m.RoleID = roleId
+		m.ID = id
+		resourceInt64, _ := strconv.ParseInt(value, 10, 64)
+		m.ResourceID = resourceInt64
+		roleInt64, _ := strconv.ParseInt(roleId, 10, 64)
+		m.RoleID = roleInt64
 		*roleResources = append(*roleResources, *m)
 	}
 	err := deleteRoleResource(roleId)

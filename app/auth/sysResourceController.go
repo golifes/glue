@@ -15,7 +15,6 @@ type SysResourceController struct {
 //MenusByUserID 获取用户默认菜单
 func (c *SysResourceController) MenusByUserID() func(echo.Context) error {
 	return func(c echo.Context) error {
-
 		response := menuByUserIDService(c.Param("userId"))
 		return c.JSON(response.StatusCode, response.Data)
 	}

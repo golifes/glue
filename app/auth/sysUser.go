@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/xwinie/glue/core"
@@ -8,21 +9,21 @@ import (
 
 //SysUser 用户
 type SysUser struct {
-	ID           string    `xorm:"pk varchar(20) 'id'" json:"Id"`
+	ID           string    `xorm:"pk bigint 'id'" json:"Id"`
 	Account      string    `xorm:"unique varchar(100) notnull"`
 	Name         string    `xorm:"varchar(200) notnull"`
 	UserType     int8      `xorm:"tinyint default(0) notnull"` //0是第三方用户1是self
 	Password     string    `xorm:"varchar(200) notnull"`
 	Salt         string    `xorm:"varchar(200) notnull"`
 	DeleteStatus int8      `xorm:"tinyint default(0) notnull"`
-	Created      time.Time `xorm:"timestamp created notnull"`
+	Created      time.Time `xorm:"datetime created notnull"`
 	Updated      time.Time `xorm:"timestamp updated  notnull"`
 	Locked       int8      `xorm:"tinyint default(0) notnull"`
 }
 
 //QuerySysUser 列表查询结果结构
 type QuerySysUser struct {
-	ID           int64 `xorm:"'id'" json:"Id"`
+	ID           string `xorm:"'id'" json:"Id"`
 	Account      string
 	Name         string
 	UserType     int8
@@ -49,8 +50,12 @@ func (u SysUser) insert() error {
 }
 
 func (u SysUser) update() error {
+	i64, err := strconv.ParseInt(u.ID, 10, 64)
+	if err != nil {
+		return err
+	}
 	o := core.New()
-	_, err := o.Where("id = ?", u.ID).Update(u)
+	_, err = o.Where("id = ?", i64).Update(u)
 	return err
 }
 func (u SysUser) accountIsExist() (entity core.Entity) {
@@ -79,8 +84,12 @@ func findUserByAccount(account string) (user QuerySysUser, err error) {
 }
 
 func findUserByID(id string) (user SysUser, err error) {
+	i64, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return user, err
+	}
 	o := core.New()
-	_, err = o.Table(&user).Where("id = ?", id).Get(&user)
+	_, err = o.Table(&user).Where("id = ?", i64).Get(&user)
 	return user, err
 }
 func userCountByPage() (num int64, err error) {

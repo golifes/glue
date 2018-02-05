@@ -1,10 +1,14 @@
 package auth
 
-import "github.com/xwinie/glue/core"
+import (
+	"strconv"
+
+	"github.com/xwinie/glue/core"
+)
 
 //SysClient 客户端管理
 type SysClient struct {
-	ID           string `xorm:"pk varchar(20) 'id'" json:"Id"`
+	ID           string `xorm:"pk bigint 'id'" json:"Id"`
 	ClientID     string `xorm:"varchar(100) notnull unique 'client_id'"`
 	Name         string `xorm:"varchar(200) notnull"`
 	Secret       string `xorm:"varchar(200) notnull"`
@@ -36,7 +40,11 @@ func (u SysClient) insert() error {
 
 func (u SysClient) update() error {
 	o := core.New()
-	_, err := o.Where("id = ?", u.ID).Update(u)
+	i64, err := strconv.ParseInt(u.ID, 10, 64)
+	if err != nil {
+		return err
+	}
+	_, err = o.Where("id = ?", i64).Update(u)
 	return err
 }
 
@@ -50,8 +58,12 @@ func (u SysClient) codeIsExist() (entity core.Entity) {
 }
 
 func updateClientLock(ID string, locked int8) error {
+	i64, err := strconv.ParseInt(ID, 10, 64)
+	if err != nil {
+		return err
+	}
 	o := core.New()
-	_, err := o.Table("sys_client").Where("id = ?", ID).Update(map[string]interface{}{"locked": locked})
+	_, err = o.Table("sys_client").Where("id = ?", i64).Update(map[string]interface{}{"locked": locked})
 	return err
 }
 func clientCountByPage() (num int64, err error) {
@@ -68,6 +80,10 @@ func clientByPage(pageSize int, offset int) (m []*QuerySysClient, err error) {
 
 func finClientByID(id string) (u SysClient, err error) {
 	o := core.New()
-	_, err = o.Table(&u).Where("id = ?", id).Get(&u)
+	i64, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return u, err
+	}
+	_, err = o.Table(&u).Where("id = ?", i64).Get(&u)
 	return u, err
 }

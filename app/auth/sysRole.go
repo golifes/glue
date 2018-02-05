@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/xwinie/glue/core"
@@ -8,12 +9,12 @@ import (
 
 //SysRole 角色
 type SysRole struct {
-	ID           string    `xorm:"pk varchar(20) 'id'" json:"Id"`
+	ID           string    `xorm:"pk bigint 'id'" json:"Id"`
 	Code         string    `xorm:"varchar(100) unique notnull"`
 	Name         string    `xorm:"varchar(200)  notnull"`
 	Description  string    `xorm:"varchar(250)"`
 	DeleteStatus int8      `xorm:"tinyint default(0) notnull"`
-	Created      time.Time `xorm:"timestamp created notnull"`
+	Created      time.Time `xorm:"datetime created notnull"`
 	Updated      time.Time `xorm:"timestamp updated  notnull"`
 	Locked       int8      `xorm:"tinyint default(0) notnull"`
 }
@@ -33,13 +34,21 @@ func (u SysRole) codeIsExist() (entity core.Entity) {
 }
 
 func deleteRole(id string) error {
+	i64, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return err
+	}
 	o := core.New()
-	_, err := o.Table("sys_role").Where("id = ?", id).Update(map[string]interface{}{"delete_status": 1})
+	_, err = o.Table("sys_role").Where("id = ?", i64).Update(map[string]interface{}{"delete_status": 1})
 	return err
 }
 func (u *SysRole) update() error {
+	i64, err := strconv.ParseInt(u.ID, 10, 64)
+	if err != nil {
+		return err
+	}
 	o := core.New()
-	_, err := o.Where("id = ?", u.ID).Update(u)
+	_, err = o.Where("id = ?", i64).Update(u)
 	return err
 }
 
@@ -61,7 +70,11 @@ func findRoleByCode(code string) (role SysRole, err error) {
 	return role, err
 }
 func findRoleByID(id string) (u SysRole, err error) {
+	i64, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return u, err
+	}
 	o := core.New()
-	_, err = o.Table(&u).Where("id = ?", id).Get(&u)
+	_, err = o.Table(&u).Where("id = ?", i64).Get(&u)
 	return u, err
 }
