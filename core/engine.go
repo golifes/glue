@@ -9,8 +9,8 @@ import (
 
 var app *echo.Echo
 
-// 初始化echo实例
-func NewEcho() *echo.Echo {
+//NewServer 初始化echo实例
+func NewServer() *echo.Echo {
 	app = echo.New()
 	return app
 }
@@ -20,46 +20,46 @@ func Hander() http.Handler {
 	return app
 }
 
-// 开启服务
+//Start 开启服务
 func Start(prot string) {
 	app.Logger.Fatal(app.Start(prot))
 }
 
-// 打印请求异常信息
+//Recover 打印请求异常信息
 func Recover() {
 
 	app.Use(middleware.Recover())
 }
 
-// 是否开启debug
+//SetDebug 是否开启debug
 func SetDebug(on bool) {
 	app.Debug = on
 }
 
-// 获取debug状态
+//Debug 获取debug状态
 func Debug() bool {
 	return app.Debug
 }
 
-// 打印请求信息
+//Logger 打印请求信息
 func Logger() {
 
 	app.Use(middleware.Logger())
 }
 
-// 开启gzip压缩
+//Gzip 开启gzip压缩
 func Gzip() {
 
 	app.Use(middleware.Gzip())
 }
 
-// 设置Body大小
+//BodyLimit 设置Body大小
 func BodyLimit(str string) {
 
 	app.Use(middleware.BodyLimit(str))
 }
 
-// 自动添加末尾斜杠
+//AddTrailingSlash 自动添加末尾斜杠
 func AddTrailingSlash() {
 
 	app.Use(middleware.AddTrailingSlashWithConfig(middleware.TrailingSlashConfig{
@@ -67,7 +67,7 @@ func AddTrailingSlash() {
 	}))
 }
 
-// 自动删除末尾斜杠
+//RemoveTrailingSlash 自动删除末尾斜杠
 func RemoveTrailingSlash() {
 
 	app.Use(middleware.RemoveTrailingSlashWithConfig(middleware.TrailingSlashConfig{

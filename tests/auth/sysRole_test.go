@@ -88,8 +88,8 @@ func TestRoleAllotResource(t *testing.T) {
 	role.Code = "100"
 	role.Name = "管理员100"
 	resource := []auth.SysResource{
-		{ID: "1", Code: "1", Action: "/v1/test1", Method: "POST", Name: "测试", IsOpen: 0, ResType: 0},
-		{ID: "2", Code: "2", Action: "/v1/test2", Method: "POST", Name: "测试", IsOpen: 0, ResType: 0},
+		{ID: "1", Code: "1", Action: "/v1/test1", Method: "POST", Name: "测试", IsOpen: 0, ResType: 0, ParentID: "0"},
+		{ID: "2", Code: "2", Action: "/v1/test2", Method: "POST", Name: "测试", IsOpen: 0, ResType: 0, ParentID: "0"},
 	}
 	o := core.New()
 	o.Insert(role)

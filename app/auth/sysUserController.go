@@ -84,12 +84,12 @@ func (c *SysUserController) GetRoleByUserID() func(echo.Context) error {
 func (c *SysUserController) UserAllotRole() func(echo.Context) error {
 	return func(c echo.Context) error {
 		type json struct {
-			RoleId []string
+			RoleID []string `query:"RoleId"`
 		}
 		var d json
 		err := c.Bind(&d)
 		if err == nil {
-			response := userAllotRole(c.Param("id"), d.RoleId)
+			response := userAllotRole(c.Param("id"), d.RoleID)
 			return c.JSON(response.StatusCode, response.Data)
 		}
 		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))

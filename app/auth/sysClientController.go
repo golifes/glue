@@ -48,7 +48,7 @@ func (c *SysClientController) Delete() func(echo.Context) error {
 	}
 }
 
-//Get
+//Get 根据默认应用获取应用信息
 func (c *SysClientController) Get() func(echo.Context) error {
 	return func(c echo.Context) error {
 		response := findClientByClientIDService(c.Request().Header.Get("appid"))
@@ -56,7 +56,7 @@ func (c *SysClientController) Get() func(echo.Context) error {
 	}
 }
 
-//Post
+//Post 创建应用
 func (c *SysClientController) Post() func(echo.Context) error {
 	return func(c echo.Context) error {
 		var json SysClient
