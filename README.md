@@ -21,3 +21,14 @@
 9. sqlite3
 10. hateoas
 11. xorm
+
+
+## 压缩 和交叉编译
+go get github.com/mitchellh/gox
+brew install upx
+
+
+## 新项目
+1. go get github.com/Masterminds/glide
+2. 添加glide 镜像
+3. glide up
