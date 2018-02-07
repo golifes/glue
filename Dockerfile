@@ -32,5 +32,5 @@ COPY dist .
 #COPY liquibase .
 RUN chmod +x -R /root
 
-ENTRYPOINT ("/root/app/glue")
-EXPOSE 8080
+CMD [ "/root/app/glue" ]
+EXPOSE 1323

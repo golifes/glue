@@ -1,6 +1,8 @@
-yhfoundationbackend_api:
-  build: .
-  ports:
-   - "8080:8080"
-  volumes:
-   - ./static:/root/app/static
+version: '3'
+
+services:
+  app:
+    # container_name: glue_api
+    build: .
+    ports:
+      - 1323:1323
