@@ -16,7 +16,7 @@ type SysResource struct {
 	Method       string    `xorm:"varchar(100)"`
 	IsOpen       int8      `xorm:"tinyint default(0) notnull"` //0非开放1开放
 	ResType      int8      `xorm:"tinyint default(0) notnull"` //0代表是接口1代表菜单
-	ParentID     string    `xorm:"bigint default(0) notnull"`
+	ParentID     string    `xorm:"bigint 'parent_id' default(0) notnull"`
 	DeleteStatus int8      `xorm:"tinyint default(0) notnull"`
 	Created      time.Time `xorm:"datetime created notnull"`
 	Updated      time.Time `xorm:"timestamp updated notnull"`

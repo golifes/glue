@@ -1,0 +1,203 @@
+hash: c2a152f0c9436c241281bc56218fb2224baf8a64198d280bfa36c7906f76741c
+updated: 2018-11-02T21:55:30.271808+08:00
+imports:
+- name: github.com/agrison/go-tablib
+  version: 4930582c22eec7bfc0e5b47e0246d5048a78fe49
+- name: github.com/agrison/mxj
+  version: 1269f8afb3b42d0e7b9cf60041e8e187727c88d6
+- name: github.com/ajg/form
+  version: 523a5da1a92f01b01f840b61689c0340a0243532
+- name: github.com/astaxie/beego
+  version: f64e6b72e93627fa65f5f7a1b0db8ad2108a5449
+  subpackages:
+  - config
+- name: github.com/bndr/gotabulate
+  version: bc555436bfd5d4e93a2dd35b462ce37e067afdda
+- name: github.com/casbin/casbin
+  version: 5ff5a6f5e38a392305b3291c5433bf79ea2afb3d
+  subpackages:
+  - config
+  - effect
+  - log
+  - model
+  - persist
+  - persist/file-adapter
+  - rbac
+  - rbac/default-role-manager
+  - util
+- name: github.com/Chronokeeper/anyxml
+  version: 54457d8e98c60cb91f18947facfa991ce3ea2ba3
+- name: github.com/CloudyKit/fastprinter
+  version: 74b38d55f37af5d6c05ca11147d616b613a3420e
+- name: github.com/CloudyKit/jet
+  version: 62edd43e4f88c6be452fd5feac77f716f546ebf6
+- name: github.com/davecgh/go-spew
+  version: d8f796af33cc11cb798c1aaeb27a4ebc5099927d
+  subpackages:
+  - spew
+- name: github.com/dgrijalva/jwt-go
+  version: 3af4c746e1c248ee8491a3e0c6f7a9cd831e95f8
+- name: github.com/fatih/structs
+  version: 878a968ab22548362a09bdb3322f98b00f470d46
+- name: github.com/fsnotify/fsnotify
+  version: ccc981bf80385c528a65fbfdd49bf2d8da22aa23
+- name: github.com/gavv/httpexpect
+  version: bdde308713130a703436e014ff782958c251d20a
+- name: github.com/gavv/monotime
+  version: 6f8212e8d10df7383609d3c377ca08884d8f3ec0
+- name: github.com/go-sql-driver/mysql
+  version: fd197cdcfae0c686792ef5399f223f5b66a30b6b
+- name: github.com/go-xorm/builder
+  version: 03eb88feccce3e477c318ce7f6f1b386544ab20b
+- name: github.com/google/go-querystring
+  version: 44c6ddd0a2342c386950e880b658017258da92fc
+  subpackages:
+  - query
+- name: github.com/hashicorp/hcl
+  version: 65a6292f0157eff210d03ed1bf6c59b190b8b906
+  subpackages:
+  - hcl/ast
+  - hcl/parser
+  - hcl/printer
+  - hcl/scanner
+  - hcl/strconv
+  - hcl/token
+  - json/parser
+  - json/scanner
+  - json/token
+- name: github.com/imkira/go-interpol
+  version: 5accad8134979a6ac504d456a6c7f1c53da237ca
+- name: github.com/klauspost/compress
+  version: b50017755d442260d792c34c7c43216d9ba7ffc7
+  subpackages:
+  - flate
+  - gzip
+  - zlib
+- name: github.com/klauspost/cpuid
+  version: e7e905edc00ea8827e58662220139109efea09db
+- name: github.com/Knetic/govaluate
+  version: 9aa49832a739dcd78a5542ff189fb82c3e423116
+- name: github.com/labstack/echo
+  version: ba1891b3dc1fc5548330e580c51157ea5eb6604f
+  subpackages:
+  - middleware
+- name: github.com/labstack/gommon
+  version: 2a618302b929cc20862dda3aa6f02f64dbe740dd
+  subpackages:
+  - bytes
+  - color
+  - log
+  - random
+- name: github.com/magiconair/properties
+  version: c2353362d570a7bfa228149c62842019201cfb71
+- name: github.com/mattn/go-colorable
+  version: efa589957cd060542a26d2dd7832fd6a6c6c3ade
+- name: github.com/mattn/go-isatty
+  version: 3fb116b820352b7f0c281308a4d6250c22d94e27
+- name: github.com/mattn/go-runewidth
+  version: b20a3daf6a39840c202fd42cc23d53607162b045
+- name: github.com/mattn/go-sqlite3
+  version: 1fc3fd346d3cc4c610f432d8bc938bb952733873
+- name: github.com/mitchellh/mapstructure
+  version: 3536a929edddb9a5b34bd6861dc4a9647cb459fe
+- name: github.com/moul/http2curl
+  version: 9ac6cf4d929b2fa8fd2d2e6dec5bb0feb4f4911d
+- name: github.com/pelletier/go-toml
+  version: 81a861c69d25a841d0c4394f0e6f84bc8c5afae0
+- name: github.com/pkg/errors
+  version: 059132a15dd08d6704c67711dae0cf35ab991756
+- name: github.com/pmezard/go-difflib
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  subpackages:
+  - difflib
+- name: github.com/sergi/go-diff
+  version: 24e2351369ec4949b2ed0dc5c477afdd4c4034e8
+  repo: https://github.com/sergi/go-diff
+  subpackages:
+  - diffmatchpatch
+- name: github.com/spf13/afero
+  version: d40851caa0d747393da1ffb28f7f9d8b4eeffebd
+  subpackages:
+  - mem
+- name: github.com/spf13/cast
+  version: 8c9545af88b134710ab1cd196795e7f2388358d7
+- name: github.com/spf13/jwalterweatherman
+  version: 94f6ae3ed3bceceafa716478c5fbf8d29ca601a1
+- name: github.com/spf13/pflag
+  version: 082b515c9490f4eccc758469c3152b77d139f868
+- name: github.com/spf13/viper
+  version: 62edee319679b6ceaec16de03b966102d2dea709
+- name: github.com/stretchr/testify
+  version: 04af85275a5c7ac09d16bb3b9b2e751ed45154e5
+  subpackages:
+  - assert
+  - require
+- name: github.com/tealeg/xlsx
+  version: dbf71b6a931e7096340690e009e40c914eb1fc3a
+- name: github.com/valyala/bytebufferpool
+  version: cdfbe9377474227bb42120c1e22fd4433e7f69bf
+- name: github.com/valyala/fasthttp
+  version: 192515395f6fe387bdbdc8105358f4d890413951
+  subpackages:
+  - fasthttputil
+  - stackless
+- name: github.com/valyala/fasttemplate
+  version: dcecefd839c4193db0d35b88ec65b4c12d360ab0
+- name: github.com/xeipuuv/gojsonpointer
+  version: 4e3ac2762d5f479393488629ee9370b50873b3a6
+- name: github.com/xeipuuv/gojsonreference
+  version: bd5ef7bd5415a7ac448318e64f11a24cd21e594b
+- name: github.com/xeipuuv/gojsonschema
+  version: f3a9dae5b19473510a3062802a98815f609ed747
+- name: github.com/xormplus/core
+  version: 6bfce2eb88670787bb30dbf9014973f31832a3d9
+- name: github.com/xormplus/xorm
+  version: 9c069d6e2e6f3ef5715fb2129f52036995549d44
+- name: github.com/yalp/jsonpath
+  version: 5cc68e5049a040829faef3a44c00ec4332f6dec7
+- name: github.com/yudai/gojsondiff
+  version: 0525c875b75ca60b9e67ddc44496aa16f21066b0
+  subpackages:
+  - formatter
+- name: github.com/yudai/golcs
+  version: d1c525dea8ce39ea9a783d33cf08932305373f2c
+  repo: https://github.com/yudai/golcs
+- name: golang.org/x/crypto
+  version: 4d3f4d9ffa16a13f451c3b2999e9c49e9750bf06
+  repo: https://github.com/golang/crypto.git
+  vcs: git
+  subpackages:
+  - acme
+  - acme/autocert
+- name: golang.org/x/net
+  version: c10e9556a7bc0e7c942242b606f0acf024ad5d6a
+  repo: https://github.com/golang/net.git
+  vcs: git
+  subpackages:
+  - publicsuffix
+- name: golang.org/x/sys
+  version: 9b800f95dbbc54abff0acf7ee32d88ba4e328c89
+  repo: https://github.com/golang/sys.git
+  vcs: git
+  subpackages:
+  - unix
+- name: golang.org/x/text
+  version: 6f44c5a2ea40ee3593d98cdcc905cc1fdaa660e2
+  repo: https://github.com/golang/text.git
+  vcs: git
+  subpackages:
+  - transform
+  - unicode/norm
+- name: google.golang.org/appengine
+  version: 4a4468ece617fc8205e99368fa2200e9d1fad421
+  repo: https://github.com/golang/appengine
+  vcs: git
+  subpackages:
+  - cloudsql
+- name: gopkg.in/flosch/pongo2.v3
+  version: 5e81b817a0c48c1c57cdf1a9056cf76bdee02ca9
+- name: gopkg.in/yaml.v2
+  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
+testImports:
+- name: github.com/smartystreets/goconvey
+  version: ef6db91d284a0e7badaa1f0c404c30aa7dee3aed

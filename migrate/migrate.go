@@ -1,10 +1,12 @@
 package migrate
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/xormplus/xorm"
 	"github.com/xwinie/glue/app/auth"
+	"github.com/xwinie/glue/app/crm"
 	"github.com/xwinie/glue/core"
 )
 
@@ -15,7 +17,11 @@ func Migrate(o *xorm.Engine) {
 		new(auth.SysRole),
 		new(auth.SysResource),
 		new(auth.SysUserRole),
-		new(auth.SysRoleResource))
+		new(auth.SysRoleResource),
+		new(crm.Customer),
+		new(crm.CustomerTag),
+	)
+
 	if err != nil {
 		log.Fatal("init db error:", err.Error())
 	}
@@ -47,45 +53,51 @@ func initAuthData() {
 	userRole.UserID = 1
 
 	resource := []auth.SysResource{
-		{ID: "10000", Code: "10000", Action: "/v1/login", Method: "POST", Name: "用户登录", IsOpen: 1, ResType: 0},
-		{ID: "10001", Code: "10001", Action: "/v1/user", Method: "POST", Name: "添加用户", ResType: 0},
-		{ID: "10002", Code: "10002", Action: "/v1/user/:id", Method: "DELETE", Name: "删除用户", ResType: 0},
-		{ID: "10003", Code: "10003", Action: "/v1/user/:id", Method: "PUT", Name: "修改用户", ResType: 0},
-		{ID: "10004", Code: "10004", Action: "/v1/user/:account", Method: "GET", Name: "根据账号获取用户", ResType: 0},
-		{ID: "10005", Code: "10005", Action: "/v1/user/:id/role", Method: "POST", Name: "给用户分配角色", ResType: 0},
-		{ID: "10006", Code: "10006", Action: "/v1/role", Method: "POST", Name: "添加角色", ResType: 0},
-		{ID: "10007", Code: "10007", Action: "/v1/role/:id", Method: "DELETE", Name: "删除角色", ResType: 0},
-		{ID: "10008", Code: "10008", Action: "/v1/role/:id", Method: "PUT", Name: "修改角色", ResType: 0},
-		{ID: "10009", Code: "10009", Action: "/v1/role/:code", Method: "GET", Name: "根据编码获取角色", ResType: 0},
-		{ID: "10010", Code: "10010", Action: "/v1/role/:id/resource", Method: "POST", Name: "给角色分配资源", ResType: 0},
-		{ID: "10011", Code: "10011", Action: "/v1/resource", Method: "POST", Name: "添加资源", ResType: 0},
-		{ID: "10012", Code: "10012", Action: "/v1/resource/:id", Method: "DELETE", Name: "删除资源", ResType: 0},
-		{ID: "10013", Code: "10013", Action: "/v1/resource/:id", Method: "PUT", Name: "修改资源", ResType: 0},
-		{ID: "10014", Code: "10014", Action: "/v1/resource/:code", Method: "GET", Name: "根据编码获取资源", ResType: 0},
-		{ID: "10015", Code: "10015", Action: "/v1/client", Method: "POST", Name: "添加应用", ResType: 0},
-		{ID: "10016", Code: "10016", Action: "/v1/client/:id", Method: "DELETE", Name: "删除应用", ResType: 0},
-		{ID: "10017", Code: "10017", Action: "/v1/client/:id", Method: "PUT", Name: "修改应用", ResType: 0},
-		{ID: "10018", Code: "10018", Action: "/v1/client/:clientId", Method: "GET", Name: "根据应用id获取应用", ResType: 0},
-		// {ID: "10019", Code: "10019", Action: "/v1/user/:id", Method: "PUT", Name: "修改用户", ResType: 0},
-		{ID: "10020", Code: "10020", Action: "/v1/role/:id/resource", Method: "GET", Name: "根据角色ID获取资源信息", ResType: 0},
-		{ID: "10021", Code: "10021", Action: "/v1/user/:id/role", Method: "GET", Name: "根据ID获取角色信息", ResType: 0},
-		{ID: "10022", Code: "10022", Action: "/v1/resource", Method: "GET", Name: "分页获取所有资源", ResType: 0},
-		{ID: "10023", Code: "10023", Action: "/v1/user", Method: "GET", Name: "分页获取所有用户", ResType: 0},
-		{ID: "10024", Code: "10024", Action: "/v1/role", Method: "GET", Name: "分页获取所有角色", ResType: 0},
-		{ID: "10025", Code: "10025", Action: "/v1/dict", Method: "POST", Name: "添加数据字典", ResType: 0},
-		{ID: "10026", Code: "10026", Action: "/v1/dict/:id", Method: "DELETE", Name: "删除数据字典", ResType: 0},
-		{ID: "10027", Code: "10027", Action: "/v1/dict/:id", Method: "PUT", Name: "修改数据字典", ResType: 0},
-		{ID: "10028", Code: "10028", Action: "/v1/dict", Method: "GET", Name: "根据分页获取数据字典", ResType: 0},
-		{ID: "10029", Code: "10029", Action: "/v1/dict/:id", Method: "GET", Name: "根据ID获取数据字典", ResType: 0},
-		{ID: "10030", Code: "10030", Action: "/v1/upload", Method: "POST", Name: "上传文件", ResType: 0},
-		{ID: "10031", Code: "10031", Action: "/static", Method: "GET", Name: "获取文件", ResType: 0},
-		{ID: "10032", Code: "10032", Action: "/images", Method: "GET", Name: "获取图片", ResType: 0},
-		{ID: "10033", Code: "10033", Action: "/v1/menus/:userId", Method: "GET", Name: "根据用户获取菜单信息", ResType: 0},
-		{ID: "10034", Code: "10034", Action: "/user", Method: "", Name: "用户列表", ResType: 1},
-		{ID: "10035", Code: "10035", Action: "/role", Method: "", Name: "角色列表", ResType: 1},
-		{ID: "10036", Code: "10036", Action: "/client", Method: "", Name: "客户端管理", ResType: 1},
-		{ID: "10037", Code: "10037", Action: "/v1/app", Method: "GET", Name: "获取当前用户的应用", ResType: 0},
-		{ID: "10038", Code: "10038", Action: "/v1/client", Method: "GET", Name: "获取当前用户的应用", ResType: 0},
+		{ID: "10000", Code: "10000", Action: "/v1/login", Method: "POST", Name: "用户登录", IsOpen: 1, ResType: 0, ParentID: "0"},
+		{ID: "10001", Code: "10001", Action: "/v1/user", Method: "POST", Name: "添加用户", ResType: 0, ParentID: "0"},
+		{ID: "10002", Code: "10002", Action: "/v1/user/:id", Method: "DELETE", Name: "删除用户", ResType: 0, ParentID: "0"},
+		{ID: "10003", Code: "10003", Action: "/v1/user/:id", Method: "PUT", Name: "修改用户", ResType: 0, ParentID: "0"},
+		{ID: "10004", Code: "10004", Action: "/v1/user/:account", Method: "GET", Name: "根据账号获取用户", ResType: 0, ParentID: "0"},
+		{ID: "10005", Code: "10005", Action: "/v1/user/:id/role", Method: "POST", Name: "给用户分配角色", ResType: 0, ParentID: "0"},
+		{ID: "10006", Code: "10006", Action: "/v1/role", Method: "POST", Name: "添加角色", ResType: 0, ParentID: "0"},
+		{ID: "10007", Code: "10007", Action: "/v1/role/:id", Method: "DELETE", Name: "删除角色", ResType: 0, ParentID: "0"},
+		{ID: "10008", Code: "10008", Action: "/v1/role/:id", Method: "PUT", Name: "修改角色", ResType: 0, ParentID: "0"},
+		{ID: "10009", Code: "10009", Action: "/v1/role/:code", Method: "GET", Name: "根据编码获取角色", ResType: 0, ParentID: "0"},
+		{ID: "10010", Code: "10010", Action: "/v1/role/:id/resource", Method: "POST", Name: "给角色分配资源", ResType: 0, ParentID: "0"},
+		{ID: "10011", Code: "10011", Action: "/v1/resource", Method: "POST", Name: "添加资源", ResType: 0, ParentID: "0"},
+		{ID: "10012", Code: "10012", Action: "/v1/resource/:id", Method: "DELETE", Name: "删除资源", ResType: 0, ParentID: "0"},
+		{ID: "10013", Code: "10013", Action: "/v1/resource/:id", Method: "PUT", Name: "修改资源", ResType: 0, ParentID: "0"},
+		{ID: "10014", Code: "10014", Action: "/v1/resource/:code", Method: "GET", Name: "根据编码获取资源", ResType: 0, ParentID: "0"},
+		{ID: "10015", Code: "10015", Action: "/v1/client", Method: "POST", Name: "添加应用", ResType: 0, ParentID: "0"},
+		{ID: "10016", Code: "10016", Action: "/v1/client/:id", Method: "DELETE", Name: "删除应用", ResType: 0, ParentID: "0"},
+		{ID: "10017", Code: "10017", Action: "/v1/client/:id", Method: "PUT", Name: "修改应用", ResType: 0, ParentID: "0"},
+		{ID: "10018", Code: "10018", Action: "/v1/client/:clientId", Method: "GET", Name: "根据应用id获取应用", ResType: 0, ParentID: "0"},
+		{ID: "10020", Code: "10020", Action: "/v1/role/:id/resource", Method: "GET", Name: "根据角色ID获取资源信息", ResType: 0, ParentID: "0"},
+		{ID: "10021", Code: "10021", Action: "/v1/user/:id/role", Method: "GET", Name: "根据ID获取角色信息", ResType: 0, ParentID: "0"},
+		{ID: "10022", Code: "10022", Action: "/v1/resource", Method: "GET", Name: "分页获取所有资源", ResType: 0, ParentID: "0"},
+		{ID: "10023", Code: "10023", Action: "/v1/user", Method: "GET", Name: "分页获取所有用户", ResType: 0, ParentID: "0"},
+		{ID: "10024", Code: "10024", Action: "/v1/role", Method: "GET", Name: "分页获取所有角色", ResType: 0, ParentID: "0"},
+		{ID: "10025", Code: "10025", Action: "/v1/dict", Method: "POST", Name: "添加数据字典", ResType: 0, ParentID: "0"},
+		{ID: "10026", Code: "10026", Action: "/v1/dict/:id", Method: "DELETE", Name: "删除数据字典", ResType: 0, ParentID: "0"},
+		{ID: "10027", Code: "10027", Action: "/v1/dict/:id", Method: "PUT", Name: "修改数据字典", ResType: 0, ParentID: "0"},
+		{ID: "10028", Code: "10028", Action: "/v1/dict", Method: "GET", Name: "根据分页获取数据字典", ResType: 0, ParentID: "0"},
+		{ID: "10029", Code: "10029", Action: "/v1/dict/:id", Method: "GET", Name: "根据ID获取数据字典", ResType: 0, ParentID: "0"},
+		{ID: "10030", Code: "10030", Action: "/v1/upload", Method: "POST", Name: "上传文件", ResType: 0, ParentID: "0"},
+		{ID: "10031", Code: "10031", Action: "/static", Method: "GET", Name: "获取文件", ResType: 0, ParentID: "0"},
+		{ID: "10032", Code: "10032", Action: "/images", Method: "GET", Name: "获取图片", ResType: 0, ParentID: "0"},
+		{ID: "10033", Code: "10033", Action: "/v1/menus/:userId", Method: "GET", Name: "根据用户获取菜单信息", ResType: 0, ParentID: "0"},
+		{ID: "10034", Code: "10034", Action: "/user", Method: "", Name: "用户列表", ResType: 1, ParentID: "0"},
+		{ID: "10035", Code: "10035", Action: "/role", Method: "", Name: "角色列表", ResType: 1, ParentID: "0"},
+		{ID: "10036", Code: "10036", Action: "/client", Method: "", Name: "客户端管理", ResType: 1, ParentID: "0"},
+		{ID: "10037", Code: "10037", Action: "/v1/app", Method: "GET", Name: "获取当前用户的应用", ResType: 0, ParentID: "0"},
+		{ID: "10038", Code: "10038", Action: "/v1/client", Method: "GET", Name: "获取当前用户的应用", ResType: 0, ParentID: "0"},
+		{ID: "10039", Code: "10039", Action: "/v1/customer", Method: "GET", Name: "获取当前顾客信息", ResType: 0, ParentID: "0"},
+		{ID: "10040", Code: "10040", Action: "/v1/customer", Method: "PUT", Name: "修改顾客信息", ResType: 0, ParentID: "0"},
+		{ID: "10041", Code: "10041", Action: "/v1/customer", Method: "DELETE", Name: "删除当前顾客信息", ResType: 0, ParentID: "0"},
+		{ID: "10042", Code: "10042", Action: "/v1/customer", Method: "POST", Name: "创建顾客信息", ResType: 0, ParentID: "0"},
+		{ID: "10043", Code: "10043", Action: "/customer", Method: "", Name: "crm管理", ResType: 1, ParentID: "0"},
+		{ID: "10044", Code: "10044", Action: "/v1/customer/:id/tag", Method: "POST", Name: "创建顾客标签信息", ResType: 0, ParentID: "0"},
+		{ID: "10045", Code: "10045", Action: "/v1/customer/:id/tag", Method: "GET", Name: "获取当前顾客标签信息", ResType: 0, ParentID: "0"},
 	}
 	roleResource := []auth.SysRoleResource{
 		{ID: 10001, RoleID: 1, ResourceID: 10001},
@@ -106,7 +118,6 @@ func initAuthData() {
 		{ID: 10016, RoleID: 1, ResourceID: 10016},
 		{ID: 10017, RoleID: 1, ResourceID: 10017},
 		{ID: 10018, RoleID: 1, ResourceID: 10018},
-		// {ID: 10019, RoleID: 1, ResourceID: 10019},
 		{ID: 10020, RoleID: 1, ResourceID: 10020},
 		{ID: 10021, RoleID: 1, ResourceID: 10021},
 		{ID: 10022, RoleID: 1, ResourceID: 10022},
@@ -126,6 +137,13 @@ func initAuthData() {
 		{ID: 10036, RoleID: 1, ResourceID: 10036},
 		{ID: 10037, RoleID: 1, ResourceID: 10037},
 		{ID: 10038, RoleID: 1, ResourceID: 10038},
+		{ID: 10039, RoleID: 1, ResourceID: 10039},
+		{ID: 10040, RoleID: 1, ResourceID: 10040},
+		{ID: 10041, RoleID: 1, ResourceID: 10041},
+		{ID: 10042, RoleID: 1, ResourceID: 10042},
+		{ID: 10043, RoleID: 1, ResourceID: 10043},
+		{ID: 10044, RoleID: 1, ResourceID: 10044},
+		{ID: 10045, RoleID: 1, ResourceID: 10045},
 	}
 	o := core.New()
 	has, err := o.Table("sys_client").Where("client_id = ?", "app1").Exist()
@@ -137,7 +155,10 @@ func initAuthData() {
 		o.Insert(user)
 		o.Insert(role)
 		o.Insert(userRole)
-		o.Insert(&resource)
+		_, err := o.Insert(&resource)
+		if err != nil {
+			fmt.Println(err)
+		}
 		o.Insert(&roleResource)
 	}
 

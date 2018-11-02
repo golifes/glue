@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/mitchellh/mapstructure"
 	"github.com/xwinie/glue/app/auth"
+	"github.com/xwinie/glue/app/crm"
 	"github.com/xwinie/glue/core/middleware/casbin"
 	"github.com/xwinie/glue/core/middleware/sign"
 )
@@ -13,9 +14,10 @@ import (
 func Routers(s *echo.Echo) {
 	s.Use(sign.New(sign.Config{F: getAppSecret, Timeout: 100}))
 	s.Use(casbin.RestAuth(casbin.Config{OpenF: getOpenRestAutz, F: getRestAutz}))
-
+	//
 	v1 := s.Group("/v1")
 	v1.POST("/login", new(auth.LoginController).Post())
+	//
 	user := v1.Group("/user")
 	usrCtl := new(auth.SysUserController)
 	user.POST("", usrCtl.Post())
@@ -25,6 +27,7 @@ func Routers(s *echo.Echo) {
 	user.DELETE("/:id", usrCtl.Delete())
 	user.GET("/:id/role", usrCtl.GetRoleByUserID())
 	user.POST("/:id/role", usrCtl.UserAllotRole())
+	//
 	role := v1.Group("/role")
 	roleCtl := new(auth.SysRoleController)
 	role.POST("", roleCtl.Post())
@@ -34,11 +37,13 @@ func Routers(s *echo.Echo) {
 	role.DELETE("/:id", roleCtl.Delete())
 	role.GET("/:id/resource", roleCtl.GetResourceByRoleID())
 	role.POST("/:id/resource", roleCtl.RoleAllotResource())
+	//
 	resource := v1.Group("/resource")
 	resourceCtl := new(auth.SysResourceController)
 	resource.GET("", resourceCtl.ResourceByPage())
 	resource.GET("/:code", resourceCtl.ResourceByCode())
 	v1.GET("/menus/:userId", resourceCtl.MenusByUserID())
+	//
 	client := v1.Group("/client")
 	clientCtl := new(auth.SysClientController)
 	client.GET("", clientCtl.ClientByPage())
@@ -46,10 +51,18 @@ func Routers(s *echo.Echo) {
 	client.PUT("/:id", clientCtl.Put())
 	client.DELETE("/:id", clientCtl.Delete())
 	client.POST("", clientCtl.Post())
-	s.GET("/a", func(c echo.Context) error {
-		return c.String(200, "Hello, World!")
-	})
-
+	//
+	customer := v1.Group("/customer")
+	customerCtl := new(crm.CustomerController)
+	customer.GET("", customerCtl.CustomerByPage())
+	customer.POST("/:id", customerCtl.Post())
+	customer.DELETE("/:id", customerCtl.Delete())
+	customer.POST("/:id/tag", customerCtl.PostTag())
+	customer.GET("/:id/tag", customerCtl.GetTag())
+	//
+	dict := v1.Group("/dict")
+	dictCtl := new(auth.SysDictController)
+	dict.GET("", dictCtl.Get())
 }
 
 func getAppSecret(appid string) string {

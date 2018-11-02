@@ -3,8 +3,10 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -57,6 +59,7 @@ func testHander(t *testing.T) *httpexpect.Expect {
 		},
 		Reporter: httpexpect.NewAssertReporter(t),
 		Printers: []httpexpect.Printer{
+			httpexpect.NewCurlPrinter(t),
 			httpexpect.NewDebugPrinter(t, true),
 		},
 	})
@@ -92,4 +95,21 @@ func Tokin(t *testing.T) string {
 	e := TestAPI(t, method, RequestURL, "app1", signature, timestamp, "")
 	r := e.WithJSON(values).Expect().Status(http.StatusCreated).JSON().Object()
 	return r.Value("Token").String().Raw()
+}
+
+func RequestByToken(method, RequestURL, signature string, body io.Reader, tokenString string, timestamp string) *httptest.ResponseRecorder {
+	if tokenString == "" {
+		app().Logger.Debug("tokenString is empty")
+		return nil
+	}
+	r, _ := http.NewRequest(method, RequestURL, body)
+	r.Header.Set("appid", "app1")
+	r.Header.Set("timestamp", timestamp)
+	r.Header.Set("signature", signature)
+	r.Header.Set("Authorization", "Bearer "+tokenString)
+
+	w := httptest.NewRecorder()
+
+	app().ServeHTTP(w, r)
+	return w
 }
