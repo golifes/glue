@@ -12,7 +12,7 @@ import (
 type SysRoleController struct {
 }
 
-//UserByPage 分页获取数据
+//RoleByPage 分页获取数据
 func (c *SysRoleController) RoleByPage() func(echo.Context) error {
 	return func(c echo.Context) error {
 		pageSize := c.QueryParam("perPage")
@@ -27,7 +27,7 @@ func (c *SysRoleController) RoleByPage() func(echo.Context) error {
 	}
 }
 
-//Post
+//Post 创建角色
 func (c *SysRoleController) Post() func(echo.Context) error {
 	return func(c echo.Context) error {
 		var json SysRole
@@ -60,7 +60,7 @@ func (c *SysRoleController) Delete() func(echo.Context) error {
 	}
 }
 
-//Get
+//Get 根据code获取角色
 func (c *SysRoleController) Get() func(echo.Context) error {
 	return func(c echo.Context) error {
 		response := findRoleByCodeService(c.Param("code"))
@@ -80,16 +80,16 @@ func (c *SysRoleController) GetResourceByRoleID() func(echo.Context) error {
 func (c *SysRoleController) RoleAllotResource() func(echo.Context) error {
 	return func(c echo.Context) error {
 		type json struct {
-			ResourceId []string
+			ResourceID []string `query:"ResourceId"`
 		}
 		var d json
 		err := c.Bind(&d)
 		if err == nil {
-			response := roleAllotResource(c.Param("id"), d.ResourceId)
+			response := roleAllotResource(c.Param("id"), d.ResourceID)
 			return c.JSON(response.StatusCode, response.Data)
 		}
 
-		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
+		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常:"+err.Error()))
 
 	}
 }

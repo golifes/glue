@@ -20,6 +20,7 @@ func main() {
 	dbconfig.DbPort = "3306"
 	dbconfig.DbPassword = "1qazZAQ!"
 	dbconfig.DbCharset = "utf8mb4"
+	dbconfig.DbShowSQL = true
 	dbconfig.DbPath = []string{"/Users/bobo/go/src/github.com/xwinie/glue/app"}
 	err := core.Connect(dbconfig)
 	if err != nil {

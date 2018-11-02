@@ -12,7 +12,7 @@ func PermissionByMultiRole(roleIds interface{}, resType int8) ([]casbin.Permissi
 	return permissionByMultiRole(roleIds, resType)
 }
 
-func roleAllotResource(roleId string, resourceIds []string) (responseEntity core.ResponseEntity) {
+func roleAllotResource(roleID string, resourceIds []string) (responseEntity core.ResponseEntity) {
 	roleResources := new([]SysRoleResource)
 	G, _ := core.NewGUID(2)
 	for _, value := range resourceIds {
@@ -21,11 +21,11 @@ func roleAllotResource(roleId string, resourceIds []string) (responseEntity core
 		m.ID = id
 		resourceInt64, _ := strconv.ParseInt(value, 10, 64)
 		m.ResourceID = resourceInt64
-		roleInt64, _ := strconv.ParseInt(roleId, 10, 64)
+		roleInt64, _ := strconv.ParseInt(roleID, 10, 64)
 		m.RoleID = roleInt64
 		*roleResources = append(*roleResources, *m)
 	}
-	err := deleteRoleResource(roleId)
+	err := deleteRoleResource(roleID)
 	if err != nil {
 		return *responseEntity.BuildError(core.BuildEntity(ParameterError, getMsg(ParameterError)))
 	}
@@ -35,7 +35,7 @@ func roleAllotResource(roleId string, resourceIds []string) (responseEntity core
 	}
 	var hateoas core.Hateoas
 	var links core.Links
-	links.Add(core.LinkTo("/v1/role/"+roleId+"/resource", "self", "GET", "根据用户id获取角色"))
+	links.Add(core.LinkTo("/v1/role/"+roleID+"/resource", "self", "GET", "根据用户id获取角色"))
 	hateoas.AddLinks(links)
 	type data struct {
 		*core.Hateoas
