@@ -1,5 +1,5 @@
 hash: c2a152f0c9436c241281bc56218fb2224baf8a64198d280bfa36c7906f76741c
-updated: 2018-11-02T21:55:30.271808+08:00
+updated: 2018-11-03T21:44:10.889618+08:00
 imports:
 - name: github.com/agrison/go-tablib
   version: 4930582c22eec7bfc0e5b47e0246d5048a78fe49
@@ -137,7 +137,7 @@ imports:
 - name: github.com/valyala/bytebufferpool
   version: cdfbe9377474227bb42120c1e22fd4433e7f69bf
 - name: github.com/valyala/fasthttp
-  version: 192515395f6fe387bdbdc8105358f4d890413951
+  version: 6b0a1c55efdd04d558cdc7a4948dce891bb007dd
   subpackages:
   - fasthttputil
   - stackless
@@ -199,5 +199,15 @@ imports:
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 testImports:
+- name: github.com/jtolds/gls
+  version: 9a4a02dbe491bef4bab3c24fd9f3087d6c4c6690
+- name: github.com/smartystreets/assertions
+  version: 01fedaa993c0a9f9aa55111501cd7c81a49e812e
+  subpackages:
+  - internal/oglematchers
 - name: github.com/smartystreets/goconvey
-  version: ef6db91d284a0e7badaa1f0c404c30aa7dee3aed
+  version: 5bb9e117a1a4f1a1555a4d41cd233c79b1a5209f
+  subpackages:
+  - convey
+  - convey/gotest
+  - convey/reporting

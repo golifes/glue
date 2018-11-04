@@ -9,7 +9,6 @@ import:
 - package: github.com/mattn/go-sqlite3
 - package: github.com/mitchellh/mapstructure
 - package: github.com/xormplus/xorm
-- package: github.com/astaxie/beego/config
 - package: google.golang.org/appengine
   repo: https://github.com/golang/appengine
   vcs: git
@@ -27,6 +26,7 @@ import:
 - package: golang.org/x/text
   repo: https://github.com/golang/text.git
   vcs: git
+
 testImport:
 - package: github.com/smartystreets/goconvey
 - package: github.com/gavv/httpexpect

@@ -25,7 +25,7 @@ func init() {
 	dbconfig := core.Config{}
 	dbconfig.DbType = "sqlite3"
 	dbconfig.DbCharset = "utf8mb4"
-	dbconfig.DbPath = []string{"/Users/bobo/go/src/github.com/xwinie/glue/app"}
+	dbconfig.DbPath = []string{""}
 	err := core.Connect(dbconfig)
 	if err != nil {
 		log.Fatal("init db error:", err.Error())
@@ -93,23 +93,18 @@ func Tokin(t *testing.T) string {
 	RequestURL := "/v1/login"
 	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
 	e := TestAPI(t, method, RequestURL, "app1", signature, timestamp, "")
+
 	r := e.WithJSON(values).Expect().Status(http.StatusCreated).JSON().Object()
 	return r.Value("Token").String().Raw()
 }
 
-func RequestByToken(method, RequestURL, signature string, body io.Reader, tokenString string, timestamp string) *httptest.ResponseRecorder {
-	if tokenString == "" {
-		app().Logger.Debug("tokenString is empty")
-		return nil
-	}
+// 一直提示400错误
+func Request(method, RequestURL, signature string, body io.Reader, timestamp string) *httptest.ResponseRecorder {
 	r, _ := http.NewRequest(method, RequestURL, body)
 	r.Header.Set("appid", "app1")
 	r.Header.Set("timestamp", timestamp)
 	r.Header.Set("signature", signature)
-	r.Header.Set("Authorization", "Bearer "+tokenString)
-
 	w := httptest.NewRecorder()
-
 	app().ServeHTTP(w, r)
 	return w
 }

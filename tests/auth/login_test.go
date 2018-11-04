@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	. "github.com/smartystreets/goconvey/convey"
 	"github.com/xwinie/glue/core"
 	"github.com/xwinie/glue/core/middleware/sign"
 	"github.com/xwinie/glue/tests"
@@ -20,8 +21,22 @@ func TestLoginPost(t *testing.T) {
 		"Password": core.Md5(core.Sha1("12345") + core.Sha1("Password")),
 	}
 	jsonValue, _ := json.Marshal(values)
+	body := bytes.NewBuffer(jsonValue)
 	RequestURL := "/v1/login"
-	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
+	signature := sign.Signature("Lx1b8JoZoE", method, body.Bytes(), RequestURL, timestamp)
+	// w := tests.Request(method, RequestURL, signature, body, timestamp)
+
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, "")
-	e.WithJSON(values).Expect().Status(http.StatusCreated)
+	repos := e.WithJSON(values).Expect().Status(http.StatusCreated).JSON().Object()
+	Convey("Subject: 用户登录\n", t, func() {
+		Convey("Accoutn Should Be 12345", func() {
+			So(repos.Value("Account").String().Raw(), ShouldEqual, "12345")
+		})
+	})
+
+	// Convey("Subject: 用户登录\n", t, func() {
+	// 	Convey("Status Code Should Be 201", func() {
+	// 		So(w.Code, ShouldEqual, 201)
+	// 	})
+	// })
 }
