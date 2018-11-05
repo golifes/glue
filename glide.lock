@@ -1,5 +1,5 @@
-hash: c2a152f0c9436c241281bc56218fb2224baf8a64198d280bfa36c7906f76741c
-updated: 2018-11-03T21:44:10.889618+08:00
+hash: a63a223f22aa9a461a9780fd2720e3da5bcf028c7012dcdcc65e21c9d74c4026
+updated: 2018-11-05T11:35:58.4736295+08:00
 imports:
 - name: github.com/agrison/go-tablib
   version: 4930582c22eec7bfc0e5b47e0246d5048a78fe49
@@ -7,18 +7,13 @@ imports:
   version: 1269f8afb3b42d0e7b9cf60041e8e187727c88d6
 - name: github.com/ajg/form
   version: 523a5da1a92f01b01f840b61689c0340a0243532
-- name: github.com/astaxie/beego
-  version: f64e6b72e93627fa65f5f7a1b0db8ad2108a5449
-  subpackages:
-  - config
 - name: github.com/bndr/gotabulate
   version: bc555436bfd5d4e93a2dd35b462ce37e067afdda
 - name: github.com/casbin/casbin
-  version: 5ff5a6f5e38a392305b3291c5433bf79ea2afb3d
+  version: 695c374a6617e9cdc930e8666307a772577cbd70
   subpackages:
   - config
   - effect
-  - log
   - model
   - persist
   - persist/file-adapter
@@ -36,7 +31,7 @@ imports:
   subpackages:
   - spew
 - name: github.com/dgrijalva/jwt-go
-  version: 3af4c746e1c248ee8491a3e0c6f7a9cd831e95f8
+  version: 06ea1031745cb8b3dab3f6a236daf2b0aa468b7e
 - name: github.com/fatih/structs
   version: 878a968ab22548362a09bdb3322f98b00f470d46
 - name: github.com/fsnotify/fsnotify
@@ -53,18 +48,6 @@ imports:
   version: 44c6ddd0a2342c386950e880b658017258da92fc
   subpackages:
   - query
-- name: github.com/hashicorp/hcl
-  version: 65a6292f0157eff210d03ed1bf6c59b190b8b906
-  subpackages:
-  - hcl/ast
-  - hcl/parser
-  - hcl/printer
-  - hcl/scanner
-  - hcl/strconv
-  - hcl/token
-  - json/parser
-  - json/scanner
-  - json/token
 - name: github.com/imkira/go-interpol
   version: 5accad8134979a6ac504d456a6c7f1c53da237ca
 - name: github.com/klauspost/compress
@@ -78,7 +61,7 @@ imports:
 - name: github.com/Knetic/govaluate
   version: 9aa49832a739dcd78a5542ff189fb82c3e423116
 - name: github.com/labstack/echo
-  version: ba1891b3dc1fc5548330e580c51157ea5eb6604f
+  version: 1abaa3049251d17932e4313c2d6165073fd07fd8
   subpackages:
   - middleware
 - name: github.com/labstack/gommon
@@ -88,8 +71,6 @@ imports:
   - color
   - log
   - random
-- name: github.com/magiconair/properties
-  version: c2353362d570a7bfa228149c62842019201cfb71
 - name: github.com/mattn/go-colorable
   version: efa589957cd060542a26d2dd7832fd6a6c6c3ade
 - name: github.com/mattn/go-isatty
@@ -97,13 +78,11 @@ imports:
 - name: github.com/mattn/go-runewidth
   version: b20a3daf6a39840c202fd42cc23d53607162b045
 - name: github.com/mattn/go-sqlite3
-  version: 1fc3fd346d3cc4c610f432d8bc938bb952733873
+  version: c7c4067b79cc51e6dfdcef5c702e74b1e0fa7c75
 - name: github.com/mitchellh/mapstructure
   version: 3536a929edddb9a5b34bd6861dc4a9647cb459fe
 - name: github.com/moul/http2curl
   version: 9ac6cf4d929b2fa8fd2d2e6dec5bb0feb4f4911d
-- name: github.com/pelletier/go-toml
-  version: 81a861c69d25a841d0c4394f0e6f84bc8c5afae0
 - name: github.com/pkg/errors
   version: 059132a15dd08d6704c67711dae0cf35ab991756
 - name: github.com/pmezard/go-difflib
@@ -115,18 +94,6 @@ imports:
   repo: https://github.com/sergi/go-diff
   subpackages:
   - diffmatchpatch
-- name: github.com/spf13/afero
-  version: d40851caa0d747393da1ffb28f7f9d8b4eeffebd
-  subpackages:
-  - mem
-- name: github.com/spf13/cast
-  version: 8c9545af88b134710ab1cd196795e7f2388358d7
-- name: github.com/spf13/jwalterweatherman
-  version: 94f6ae3ed3bceceafa716478c5fbf8d29ca601a1
-- name: github.com/spf13/pflag
-  version: 082b515c9490f4eccc758469c3152b77d139f868
-- name: github.com/spf13/viper
-  version: 62edee319679b6ceaec16de03b966102d2dea709
 - name: github.com/stretchr/testify
   version: 04af85275a5c7ac09d16bb3b9b2e751ed45154e5
   subpackages:
@@ -137,7 +104,7 @@ imports:
 - name: github.com/valyala/bytebufferpool
   version: cdfbe9377474227bb42120c1e22fd4433e7f69bf
 - name: github.com/valyala/fasthttp
-  version: 6b0a1c55efdd04d558cdc7a4948dce891bb007dd
+  version: 8f4c5d5d1dbb772a29f059645f0f03a4556c1dad
   subpackages:
   - fasthttputil
   - stackless
@@ -185,9 +152,6 @@ imports:
   version: 6f44c5a2ea40ee3593d98cdcc905cc1fdaa660e2
   repo: https://github.com/golang/text.git
   vcs: git
-  subpackages:
-  - transform
-  - unicode/norm
 - name: google.golang.org/appengine
   version: 4a4468ece617fc8205e99368fa2200e9d1fad421
   repo: https://github.com/golang/appengine
