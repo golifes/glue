@@ -3,10 +3,8 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -58,10 +56,10 @@ func testHander(t *testing.T) *httpexpect.Expect {
 			Jar:       httpexpect.NewJar(),
 		},
 		Reporter: httpexpect.NewAssertReporter(t),
-		Printers: []httpexpect.Printer{
-			httpexpect.NewCurlPrinter(t),
-			httpexpect.NewDebugPrinter(t, true),
-		},
+		// Printers: []httpexpect.Printer{
+		// 	httpexpect.NewCurlPrinter(t),
+		// 	httpexpect.NewDebugPrinter(t, false),
+		// },
 	})
 	return e
 }
@@ -96,15 +94,4 @@ func Tokin(t *testing.T) string {
 
 	r := e.WithJSON(values).Expect().Status(http.StatusCreated).JSON().Object()
 	return r.Value("Token").String().Raw()
-}
-
-// 一直提示400错误
-func Request(method, RequestURL, signature string, body io.Reader, timestamp string) *httptest.ResponseRecorder {
-	r, _ := http.NewRequest(method, RequestURL, body)
-	r.Header.Set("appid", "app1")
-	r.Header.Set("timestamp", timestamp)
-	r.Header.Set("signature", signature)
-	w := httptest.NewRecorder()
-	app().ServeHTTP(w, r)
-	return w
 }

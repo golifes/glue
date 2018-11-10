@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	. "github.com/smartystreets/goconvey/convey"
 	"github.com/xwinie/glue/app/auth"
 	"github.com/xwinie/glue/core"
 	"github.com/xwinie/glue/core/middleware/sign"
@@ -24,7 +25,10 @@ func TestClientrByPage(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL+"?"+values.Encode(), timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.WithQueryString(values.Encode()).Expect().Status(http.StatusOK)
+	repos := e.WithQueryString(values.Encode()).Expect().Status(http.StatusOK).JSON().Object()
+	Convey("Subject: 分页获取客户端\n", t, func() {
+		So(repos.Value("Clients").Array().First().Object().Value("ClientId").String().Raw(), ShouldEqual, "app1")
+	})
 }
 
 func TestClientPut(t *testing.T) {
@@ -47,7 +51,10 @@ func TestClientPut(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.WithJSON(values).Expect().Status(http.StatusCreated)
+	repos := e.WithJSON(values).Expect().Status(http.StatusCreated).JSON().Object()
+	Convey("Subject: 根据id修改客户端信息\n", t, func() {
+		So(repos.Value("_links").Array().First().Object().Value("href").String().Raw(), ShouldEqual, "/v1/client/app10")
+	})
 }
 
 func TestClientDelete(t *testing.T) {
@@ -57,7 +64,10 @@ func TestClientDelete(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.Expect().Status(http.StatusNoContent)
+	repos := e.Expect().Status(http.StatusNoContent).JSON().Object()
+	Convey("Subject: 根据id删除客户端信息\n", t, func() {
+		So(repos.Value("code").Raw(), ShouldEqual, 100000)
+	})
 }
 func TestClientByDefault(t *testing.T) {
 	method := "GET"
@@ -66,5 +76,8 @@ func TestClientByDefault(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.Expect().Status(http.StatusOK)
+	repos := e.Expect().Status(http.StatusOK).JSON().Object()
+	Convey("Subject: 根据id获取客户端信息\n", t, func() {
+		So(repos.Value("Client").Object().Value("ClientID").String().Raw(), ShouldEqual, "app1")
+	})
 }

@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	. "github.com/smartystreets/goconvey/convey"
 	"github.com/xwinie/glue/core/middleware/sign"
 	"github.com/xwinie/glue/tests"
 )
@@ -20,7 +21,10 @@ func TestResourcerByPage(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL+"?"+values.Encode(), timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.WithQueryString(values.Encode()).Expect().Status(http.StatusOK)
+	repos := e.WithQueryString(values.Encode()).Expect().Status(http.StatusOK).JSON().Object()
+	Convey("Subject: 分页获取资源信息\n", t, func() {
+		So(repos.Value("Resources").Array().First().Object().Value("Action").String().Raw(), ShouldEqual, "/v1/login")
+	})
 }
 func TestMenusByUserID(t *testing.T) {
 	method := "GET"
@@ -29,7 +33,10 @@ func TestMenusByUserID(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.Expect().Status(http.StatusOK)
+	repos := e.Expect().Status(http.StatusOK).JSON()
+	Convey("Subject: 根据用户id获取菜单信息\n", t, func() {
+		So(repos.Array().First().Object().Value("Code").Raw(), ShouldEqual, "10034")
+	})
 }
 
 func TestResourceByCode(t *testing.T) {
@@ -39,5 +46,8 @@ func TestResourceByCode(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.Expect().Status(http.StatusOK)
+	repos := e.Expect().Status(http.StatusOK).JSON().Object()
+	Convey("Subject: 根据资源编号获取资源信息\n", t, func() {
+		So(repos.Value("Action").String().Raw(), ShouldEqual, "/v1/login")
+	})
 }

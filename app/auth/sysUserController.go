@@ -67,8 +67,11 @@ func (c *SysUserController) Delete() func(echo.Context) error {
 //Get 根据账号获取数据
 func (c *SysUserController) Get() func(echo.Context) error {
 	return func(c echo.Context) error {
-		response := findUserByAccountService(c.Param("account"))
-		return c.JSON(response.StatusCode, response.Data)
+		if c.Param("id") != "" {
+			response := findUserByAccountService(c.Param("id"))
+			return c.JSON(response.StatusCode, response.Data)
+		}
+		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
 	}
 }
 

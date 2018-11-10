@@ -6,7 +6,6 @@ import:
 - package: github.com/labstack/echo
   subpackages:
   - middleware
-- package: github.com/mattn/go-sqlite3
 - package: github.com/mitchellh/mapstructure
 - package: github.com/xormplus/xorm
 - package: google.golang.org/appengine
@@ -30,3 +29,4 @@ import:
 testImport:
 - package: github.com/smartystreets/goconvey
 - package: github.com/gavv/httpexpect
+- package: github.com/mattn/go-sqlite3

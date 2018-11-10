@@ -24,7 +24,6 @@ func TestLoginPost(t *testing.T) {
 	body := bytes.NewBuffer(jsonValue)
 	RequestURL := "/v1/login"
 	signature := sign.Signature("Lx1b8JoZoE", method, body.Bytes(), RequestURL, timestamp)
-	// w := tests.Request(method, RequestURL, signature, body, timestamp)
 
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, "")
 	repos := e.WithJSON(values).Expect().Status(http.StatusCreated).JSON().Object()
@@ -33,10 +32,4 @@ func TestLoginPost(t *testing.T) {
 			So(repos.Value("Account").String().Raw(), ShouldEqual, "12345")
 		})
 	})
-
-	// Convey("Subject: 用户登录\n", t, func() {
-	// 	Convey("Status Code Should Be 201", func() {
-	// 		So(w.Code, ShouldEqual, 201)
-	// 	})
-	// })
 }

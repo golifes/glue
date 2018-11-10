@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	. "github.com/smartystreets/goconvey/convey"
 	"github.com/xwinie/glue/app/auth"
 
 	"github.com/xwinie/glue/core"
@@ -29,7 +30,10 @@ func TestUserPost(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.WithJSON(values).Expect().Status(http.StatusCreated)
+	repos := e.WithJSON(values).Expect().Status(http.StatusCreated).JSON().Object()
+	Convey("Subject: 创建用户\n", t, func() {
+		So(repos.Value("_links").Array().First().Object().Value("href").String().Raw(), ShouldEqual, "/v1/user/1234567")
+	})
 }
 func TestUserPut(t *testing.T) {
 	o := core.New()
@@ -46,7 +50,10 @@ func TestUserPut(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.WithJSON(values).Expect().Status(http.StatusCreated)
+	repos := e.WithJSON(values).Expect().Status(http.StatusCreated).JSON().Object()
+	Convey("Subject: 修改用户\n", t, func() {
+		So(repos.Value("_links").Array().First().Object().Value("href").String().Raw(), ShouldEqual, "/v1/user/1234567")
+	})
 }
 func TestUserByPage(t *testing.T) {
 	method := "GET"
@@ -58,7 +65,10 @@ func TestUserByPage(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL+"?"+values.Encode(), timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.WithQueryString(values.Encode()).Expect().Status(http.StatusOK)
+	repos := e.WithQueryString(values.Encode()).Expect().Status(http.StatusOK).JSON().Object()
+	Convey("Subject: 分页获取用户\n", t, func() {
+		So(repos.Value("Users").Array().First().Object().Value("Account").String().Raw(), ShouldEqual, "12345")
+	})
 }
 func TestUserByAccount(t *testing.T) {
 	method := "GET"
@@ -67,7 +77,10 @@ func TestUserByAccount(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.Expect().Status(http.StatusOK)
+	repos := e.Expect().Status(http.StatusOK).JSON().Object()
+	Convey("Subject: 根据账号获取用户\n", t, func() {
+		So(repos.Value("Account").String().Raw(), ShouldEqual, "1234567")
+	})
 }
 
 func TestUserDelete(t *testing.T) {
@@ -80,7 +93,10 @@ func TestUserDelete(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.Expect().Status(http.StatusNoContent)
+	repos := e.Expect().Status(http.StatusNoContent).JSON().Object()
+	Convey("Subject: 根据id删除用户\n", t, func() {
+		So(repos.Value("code").Raw(), ShouldEqual, 100000)
+	})
 }
 
 func TestUserAllotRole(t *testing.T) {
@@ -108,7 +124,10 @@ func TestUserAllotRole(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, bytes.NewBuffer(jsonValue).Bytes(), RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.WithJSON(values).Expect().Status(http.StatusOK)
+	repos := e.WithJSON(values).Expect().Status(http.StatusOK).JSON().Object()
+	Convey("Subject: 根据用户分配角色\n", t, func() {
+		So(repos.Value("_links").Array().First().Object().Value("href").String().Raw(), ShouldEqual, "/v1/user/10/role")
+	})
 }
 
 func TestRoleByUserID(t *testing.T) {
@@ -118,5 +137,8 @@ func TestRoleByUserID(t *testing.T) {
 	signature := sign.Signature("Lx1b8JoZoE", method, nil, RequestURL, timestamp)
 	tokin := tests.Tokin(t)
 	e := tests.TestAPI(t, method, RequestURL, "app1", signature, timestamp, tokin)
-	e.Expect().Status(http.StatusOK)
+	repos := e.Expect().Status(http.StatusOK).JSON().Object()
+	Convey("Subject: 根据用户id获取角色\n", t, func() {
+		So(repos.Value("Roles").Array().First().Object().Value("Code").Raw(), ShouldEqual, "10")
+	})
 }
