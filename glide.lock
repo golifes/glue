@@ -1,5 +1,5 @@
-hash: a63a223f22aa9a461a9780fd2720e3da5bcf028c7012dcdcc65e21c9d74c4026
-updated: 2018-11-05T11:35:58.4736295+08:00
+hash: ececb43bd00f679075c541ef13511606a6ac86ad0b904ea71d8050f83bba27b6
+updated: 2018-11-10T19:43:20.632011+08:00
 imports:
 - name: github.com/agrison/go-tablib
   version: 4930582c22eec7bfc0e5b47e0246d5048a78fe49
@@ -10,10 +10,11 @@ imports:
 - name: github.com/bndr/gotabulate
   version: bc555436bfd5d4e93a2dd35b462ce37e067afdda
 - name: github.com/casbin/casbin
-  version: 695c374a6617e9cdc930e8666307a772577cbd70
+  version: 542e16cac74562eefac970a7d0d1467640d1f1cb
   subpackages:
   - config
   - effect
+  - log
   - model
   - persist
   - persist/file-adapter
@@ -31,7 +32,7 @@ imports:
   subpackages:
   - spew
 - name: github.com/dgrijalva/jwt-go
-  version: 06ea1031745cb8b3dab3f6a236daf2b0aa468b7e
+  version: 3af4c746e1c248ee8491a3e0c6f7a9cd831e95f8
 - name: github.com/fatih/structs
   version: 878a968ab22548362a09bdb3322f98b00f470d46
 - name: github.com/fsnotify/fsnotify
@@ -51,7 +52,7 @@ imports:
 - name: github.com/imkira/go-interpol
   version: 5accad8134979a6ac504d456a6c7f1c53da237ca
 - name: github.com/klauspost/compress
-  version: b50017755d442260d792c34c7c43216d9ba7ffc7
+  version: 30be6041bed523c18e269a700ebd9c2ea9328574
   subpackages:
   - flate
   - gzip
@@ -61,7 +62,7 @@ imports:
 - name: github.com/Knetic/govaluate
   version: 9aa49832a739dcd78a5542ff189fb82c3e423116
 - name: github.com/labstack/echo
-  version: 1abaa3049251d17932e4313c2d6165073fd07fd8
+  version: ba46ff80a41623647fe4a40ba959afa18845c136
   subpackages:
   - middleware
 - name: github.com/labstack/gommon
@@ -78,7 +79,7 @@ imports:
 - name: github.com/mattn/go-runewidth
   version: b20a3daf6a39840c202fd42cc23d53607162b045
 - name: github.com/mattn/go-sqlite3
-  version: c7c4067b79cc51e6dfdcef5c702e74b1e0fa7c75
+  version: eed79b86572f203cc92e92048ba06b56a8ca06e8
 - name: github.com/mitchellh/mapstructure
   version: 3536a929edddb9a5b34bd6861dc4a9647cb459fe
 - name: github.com/moul/http2curl
@@ -119,7 +120,7 @@ imports:
 - name: github.com/xormplus/core
   version: 6bfce2eb88670787bb30dbf9014973f31832a3d9
 - name: github.com/xormplus/xorm
-  version: 9c069d6e2e6f3ef5715fb2129f52036995549d44
+  version: 4fd8a981b62959ee74327777bcdf42163c494eb7
 - name: github.com/yalp/jsonpath
   version: 5cc68e5049a040829faef3a44c00ec4332f6dec7
 - name: github.com/yudai/gojsondiff
@@ -130,20 +131,20 @@ imports:
   version: d1c525dea8ce39ea9a783d33cf08932305373f2c
   repo: https://github.com/yudai/golcs
 - name: golang.org/x/crypto
-  version: 4d3f4d9ffa16a13f451c3b2999e9c49e9750bf06
+  version: e4dc69e5b2fd71dcaf8bd5d054eb936deb78d1fa
   repo: https://github.com/golang/crypto.git
   vcs: git
   subpackages:
   - acme
   - acme/autocert
 - name: golang.org/x/net
-  version: c10e9556a7bc0e7c942242b606f0acf024ad5d6a
+  version: 03003ca0c849e57b6ea29a4bab8d3cb6e4d568fe
   repo: https://github.com/golang/net.git
   vcs: git
   subpackages:
   - publicsuffix
 - name: golang.org/x/sys
-  version: 9b800f95dbbc54abff0acf7ee32d88ba4e328c89
+  version: 66b7b1311ac80bbafcd2daeef9a5e6e2cd1e2399
   repo: https://github.com/golang/sys.git
   vcs: git
   subpackages:

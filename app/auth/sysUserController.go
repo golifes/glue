@@ -67,8 +67,9 @@ func (c *SysUserController) Delete() func(echo.Context) error {
 //Get 根据账号获取数据
 func (c *SysUserController) Get() func(echo.Context) error {
 	return func(c echo.Context) error {
-		if c.Param("id") != "" {
-			response := findUserByAccountService(c.Param("id"))
+		c.SetParamNames("account") //put 和get same router,这样两种解决方法，1是现在这种重新设置param，2是用param("id"),即重复的param
+		if account := c.Param("account"); account != "" {
+			response := findUserByAccountService(account)
 			return c.JSON(response.StatusCode, response.Data)
 		}
 		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))

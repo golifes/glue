@@ -63,8 +63,9 @@ func (c *SysRoleController) Delete() func(echo.Context) error {
 //Get 根据code获取角色
 func (c *SysRoleController) Get() func(echo.Context) error {
 	return func(c echo.Context) error {
-		if id := c.Param("id"); id != "" {
-			response := findRoleByCodeService(id)
+		c.SetParamNames("code")
+		if code := c.Param("code"); code != "" {
+			response := findRoleByCodeService(code)
 			return c.JSON(response.StatusCode, response.Data)
 		}
 		return c.JSON(http.StatusBadRequest, core.BuildEntity(http.StatusBadRequest, "请求异常"))
